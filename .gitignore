@@ -1,0 +1,24 @@
+*.log
+*.zip
+*.pickle
+*.png
+#*.xlsx
+Untitled*.py
+
+.ipynb_checkpoints/*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*/.ipynb_checkpoints
+*/.pytest_cache 
+*$py.class
+
+# Directories 
+.bck/**
+bat/**
+pylikesas_from_sas/**
+venv_python3138_pyLikeSAS 
+#.temp/**
+#docsrc/_build/**
+#docsrc/autoapi/
