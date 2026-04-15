@@ -11,14 +11,18 @@ Untitled*.py
 __pycache__/
 *.py[cod]
 */.ipynb_checkpoints
-*/.pytest_cache 
+*/.pytest_cache
 *$py.class
+docsrc/docs/**
 
-# Directories 
+# Directories
 .bck/**
 bat/**
 pylikesas_from_sas/**
-venv_python3138_pyLikeSAS 
+venv_python3138_pyLikeSAS
 #.temp/**
 #docsrc/_build/**
 #docsrc/autoapi/
+
+/.quarto/
+**/*.quarto_ipynb
