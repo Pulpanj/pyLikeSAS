@@ -7,6 +7,9 @@ Hopefully it enables both to jump to  projects coded in python while having conf
 couple of things so well working in SAS will fully be in their hands while using 
 ever changing python and its modules versions.
 
+## Documentation 
+  Quarto generate documentation is at https://pulpanj.github.io/pyLikeSAS/
+
 ## What is goal of pyLikeSAS module:
   - implement function that will process dataframe like SAS data step 
   - implement SAS data set option on top of dataframe
@@ -15,21 +18,20 @@ in SAS ODS like fashion
   - gradually implement couple of useful SAS procs as python functions
 
 ## To Do list
-  - bug in first.var - it is returned as float 
-  - bug n/a in MD output
   + trace messages to stderr (Logger)
-  - proc printto 
-  - latex main file + includes
   - html output with frame and files on proc/output level
   - by processing of outputs
   - excel as output format
+  - latex main file + includes
   - styles defined for latex
   - svg/pdf support for latex
   - typst output format
-  - fancy titles/footnotes for text destination
-  - proc freq 
+  - AsciiDoc output format 
+  - fancy titles/footnotes for text destinations
+  - proc freq  
   - proc contents 
   - proc univariate
+  - proc printto 
   - ...
   - more styles
 

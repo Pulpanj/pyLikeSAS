@@ -1,0 +1,151 @@
+project:
+  type: website
+  output-dir: ./docs
+  render:
+      - "*.qmd"
+      - "!Examples.qmd"
+      - "!UsageofPdDataSetoptions.qmd"
+      - "!WorkingwithPdDataSet.qmd"
+      - "!./docs/"
+      - "!./docsrc_book/"
+
+
+quarto-python: "d:/ajps/pyLikeSAS/venv_python3138_pyLikeSAS/"
+
+lang: en 
+date-format: iso 
+
+website:
+  navbar: false
+  back-to-top-navigation: true
+  page-navigation: true
+  sidebar:
+    type: dark
+    border: true
+    alignment: left
+    tools:
+      - icon: "github"
+        href: "https://github.com/PulpanJ/pyLikeSAS"
+      - icon: "envelope"
+        href: "mailto:pulpanj@volny.cz"
+      - icon: "file-pdf"
+        href: "mybook.pdf"
+    title: false #PyLikeSAS Documentation
+    logo: images/pyLikeSAS_logo.png
+    logo-alt: pyLikeSAS Documentation
+    # background: dark
+    # foreground: blue
+    style: "docked"
+    collapse-level: 0
+    search: true
+    # contents: auto
+    contents:
+      # - section: "Summary"
+      - href: index.qmd
+        text: Introduction
+        contents:
+        - href: Purpose.qmd
+          text: Purpose
+        - href: pyLikeSAS.qmd
+          text: Features
+      - section: "Usage Guide"
+        contents:
+        - href: SampleDataFrame.qmd 
+          text: Sample DataFrame
+        - href: Implementationsofdatastep.qmd
+          text: Implementation of data step
+      #   - href: WorkingwithPdDataSet.qmd
+      #     text: Working with PdDataSet
+      #   - href: UsageofPdDataSetoptions.qmd
+      #     text: Usage of PdDataSet options
+      #   - href: Examples.qmd
+      #     text: Examples
+      # - href: reference/index.qmd
+      #   text: Api Reference
+      #   contents:
+      #   - href: reference/PyODS.qmd
+      #     text: PyODS
+      #   - href: reference/PdDataSet.qmd
+      #     text: PdDataSet
+      #   - href: reference/data_step.qmd
+      #     text: data_step
+      #   - href: reference/proc_print.qmd
+      #     text: proc_print
+      #   - href: reference/proc_figure.qmd
+      #     text: proc_figure
+      #   - href: reference/proc_freq1.qmd
+      #     text: proc_freq1
+      #   - href: reference/proc_freq2.qmd
+      #     text: proc_freq2
+      #     children: flat
+      # - href: ./mybook.pdf
+      #   text: Download PDF
+
+
+toc: true
+toc-location: right
+toc-title: "On this page"
+page-layout: article
+toc-depth: 6
+
+
+format:
+  html:
+    theme: yeti #spacelab #united
+      # light: brand
+      # dark: slate
+    css: styles.css
+    strip-comments: true
+    link-external-icon: true
+    link-external-newwindow: true 
+    anchor-sections: true
+    page-layout: full
+    number-sections: false
+    toc-depth: 6       
+    toc-expand: false
+    smooth-scroll: false
+    monofont: "Cascadia Mono"
+    monobackgroundcolor: RGB(240, 240, 240)
+    # code-block-bg: lightyellow
+    code-block-border-left: "#31BAE9"
+    code-copy: true
+    code-link: true
+    syntax-highlighting: tango.theme #tango #monokai #pygments
+    grid:
+      sidebar-width: 360px
+      body-width: 800px
+      margin-width: 360px
+      gutter-width: 1.5rem       
+    # linkcolor: blue
+    # theme:
+    #     # - lux,cosmo
+    #     # - brand
+    #     light: brand
+    #     dark: slate 
+
+
+quartodoc:
+  # the name used to import the package you want to create reference docs for
+  package: pyLikeSAS
+  # sidebar: reference/_sidebar.yml
+  # options:
+  #   include_attributes: true
+  parser: google   #google, numpy, or docstring_parser
+  sections:
+    - title: API Reference
+      contents:
+        # - name: PyODS
+        #   children: flat
+        - name: PdDataSet
+          children: flat
+        # - name: data_step
+        #   children: flat
+        # - name: proc_print
+        #   children: flat
+        # - name: proc_figure
+        #   children: flat
+        # - name: proc_freq1
+        #   children: flat
+        # - name: proc_freq2
+        #   children: flat
+
