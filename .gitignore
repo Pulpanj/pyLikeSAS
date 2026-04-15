@@ -1,11 +1,17 @@
 *.log
 *.zip
 *.pickle
-*.png
 #*.xlsx
 Untitled*.py
-
 .ipynb_checkpoints/*
+
+# Ignore all PNG files everywhere
+*.png
+
+# EXCEPTION: do NOT ignore PNGs inside /doc
+!doc/*.png
+!doc/**/*.png
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
