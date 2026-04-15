@@ -35,7 +35,7 @@ cosi
 - - [Using PdDataSet Options](UsageofPdDataSetoptions.qmd)
   - How‑To: Usage of SAS‑like DataSet options for a pandas‑based dataset
 
-- - [Running Data Step](ImplementationsofDataStep.qmd)
+- - [Running Data Step](ImplementationofDataStep.qmd)
   - How‑To: The data_step Function — pyLikeSAS Implementation of the SAS Data Step
 :::
 
