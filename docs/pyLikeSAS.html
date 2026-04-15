@@ -143,7 +143,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Usage Guide</span></a>
+ <span class="menu-text">Usage Guides</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -157,8 +157,20 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Implementationsofdatastep.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Implementation of data step</span></a>
+  <a href="./WorkingwithPdDataSet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with PdDataSet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./UsageofPdDataSetoptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using PdDataSet Options</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ImplementationsofDataStep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Data Step</span></a>
   </div>
 </li>
       </ul>
@@ -177,7 +189,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#pddataset-class" id="toc-pddataset-class" class="nav-link" data-scroll-target="#pddataset-class">PdDataSet class</a></li>
   <li><a href="#data-step-function" id="toc-data-step-function" class="nav-link" data-scroll-target="#data-step-function">Data step function</a></li>
-  <li><a href="#output-delivery-system" id="toc-output-delivery-system" class="nav-link" data-scroll-target="#output-delivery-system">Output Delivery System</a></li>
+  <li><a href="#pyods-class" id="toc-pyods-class" class="nav-link" data-scroll-target="#pyods-class">PyODS class</a></li>
   <li><a href="#procedures" id="toc-procedures" class="nav-link" data-scroll-target="#procedures">Procedures</a></li>
   <li><a href="#auxiliary-tools" id="toc-auxiliary-tools" class="nav-link" data-scroll-target="#auxiliary-tools">Auxiliary tools</a></li>
   </ul></li>
@@ -194,84 +206,117 @@ ul.task-list li input[type="checkbox"] {
 <h1>Current features of pyLikeSAS</h1>
 <section id="pddataset-class" class="level2">
 <h2 class="anchored" data-anchor-id="pddataset-class">PdDataSet class</h2>
-<p>Basic pyLikeSAS object <strong>PdDataSet</strong> extends pandas DataFrame class by ability to add/set following attributes (stored in the pandas DataFrame’s _attrs attribute):</p>
+<p>Basic pyLikeSAS object <strong>PdDataSet</strong> extends the pandas <code>DataFrame</code> class by adding the ability to set the following attributes (stored in the DataFrame’s <code>_attrs</code> attribute):</p>
 <ul>
-<li>the <strong>labels</strong> for columns (variables)</li>
-<li>the <strong>formats</strong> for columns (variables)</li>
-<li>to use SAS-like <strong>dataset options</strong> like:
+<li><strong>labels</strong> for columns (variables)<br>
+</li>
+<li><strong>formats</strong> for columns (variables)<br>
+</li>
+<li>support for SAS‑like <strong>dataset options</strong>, such as:
 <ul>
-<li>the dataset label</li>
-<li><strong>drop/keep</strong> variables</li>
-<li><strong>rename</strong> variables</li>
-<li>define sort <strong>by order</strong></li>
-<li>run <strong>SQL</strong> select on data set (or on more tables)</li>
+<li>a dataset label<br>
+</li>
+<li><strong>drop/keep</strong> variables<br>
+</li>
+<li><strong>rename</strong> variables<br>
+</li>
+<li>define sort <strong>BY order</strong><br>
+</li>
+<li>run <strong>SQL</strong> SELECT on a dataset (or on multiple tables)</li>
 </ul></li>
 </ul>
-<p>Concept of column formats in pyLikeSAS is covered by python dictionaries or mapping functions (see provided <strong>lookup_format</strong> function that covers also ranges of values along with missing and unknown values for particular variable of PdDataSet).</p>
+<p>The concept of column formats in pyLikeSAS is implemented using Python dictionaries or mapping functions.<br>
+See the provided <strong><code>lookup_format</code></strong> function, which also supports value ranges as well as missing and unknown values for a given variable in a <code>PdDataSet</code>.</p>
 <p><strong>Note:</strong></p>
-<p><em>As PdDataSet class just extends the pandas DataFrame all capabilities of the pandas DataFrame are still available.</em></p>
+<p><em>As the PdDataSet class simply extends the pandas DataFrame, all capabilities of the underlying DataFrame remain available.</em></p>
 </section>
 <section id="data-step-function" class="level2">
 <h2 class="anchored" data-anchor-id="data-step-function">Data step function</h2>
-<p>pyLikeSAS also includes function <strong>data_step</strong> that allows to mimic the behavior of SAS data step. The function is designed to be used with PdDataSet objects and allows to define the data step logic as a single python function. Return values from data step logic function are used to create the output PdDataSet object.</p>
-<p>Following features of data step are supported:</p>
+<p><code>pyLikeSAS</code> also includes the <strong>data_step</strong> function, which mimics the behavior of the SAS data step.<br>
+The function is designed to work with <code>PdDataSet</code> objects and allows you to define the data‑step logic as a single Python function.<br>
+The return values from this logic function are then used to construct the output <code>PdDataSet</code>.</p>
+<p>The following data‑step features are supported:</p>
 <ul>
-<li>define <strong>retain</strong> variables</li>
-<li>define <strong>by</strong> groups (including <strong>first/last</strong> flag variables)</li>
-<li>define output columns and their <strong>order</strong> in the output dataset</li>
-<li>pass additional parameters to data step logic function (like dictionaries, lists, etc.)</li>
+<li>define <strong>retain</strong> variables<br>
+</li>
+<li>define <strong>BY</strong> groups (including <strong>FIRST./LAST.</strong> flag variables)<br>
+</li>
+<li>define output columns and their <strong>order</strong> in the resulting dataset<br>
+</li>
+<li>pass additional parameters to the data‑step logic function (such as dictionaries, lists, etc.)</li>
 </ul>
 </section>
-<section id="output-delivery-system" class="level2">
-<h2 class="anchored" data-anchor-id="output-delivery-system">Output Delivery System</h2>
-<p>PyODS class is a version of SAS Output Delivery System (ODS) in pyLikeSAS package. It aims to simple generation of outputs in various file formats (destinations) with color-full styles selected or defined by user. It includes:</p>
+<section id="pyods-class" class="level2">
+<h2 class="anchored" data-anchor-id="pyods-class">PyODS class</h2>
+<p>The <strong>PyODS</strong> class is the pyLikeSAS version of the SAS Output Delivery System (ODS). Its goal is to provide simple generation of outputs in various file formats (destinations), with colorful styles selected or defined by the user. It includes:</p>
 <ul>
-<li>support for titles/footnotes</li>
-<li>outputs tables to the following formats:
+<li>support for titles and footnotes<br>
+</li>
+<li>table output to the following formats:
 <ul>
-<li>text files</li>
-<li>Jupyter notebooks</li>
-<li>terminal (with formatting using tabulate package)</li>
-<li>HTML files</li>
-<li>Markdown</li>
-<li>Latex</li>
+<li>plain text files<br>
+</li>
+<li>Jupyter notebooks<br>
+</li>
+<li>terminal output (formatted using the <em>tabulate</em> package)<br>
+</li>
+<li>HTML files<br>
+</li>
+<li>Markdown<br>
+</li>
+<li>LaTeX<br>
+</li>
 </ul></li>
-<li>outputs figures (graphs) to the following file formats:
+<li>figure (graph) output to the following formats:
 <ul>
-<li>png,jpeg</li>
-<li>SVG</li>
-<li>PDF</li>
+<li>PNG, JPEG<br>
+</li>
+<li>SVG<br>
+</li>
+<li>PDF<br>
+</li>
 </ul></li>
-<li>outputs graphs as links or in place content to the output files</li>
-<li>definition of own styles and templates</li>
-<li>tracing of PyODS operation</li>
+<li>output of graphs either as links or inline content in the generated files<br>
+</li>
+<li>definition of custom styles and templates<br>
+</li>
+<li>tracing of PyODS operations</li>
 </ul>
 </section>
 <section id="procedures" class="level2">
 <h2 class="anchored" data-anchor-id="procedures">Procedures</h2>
-<p>No way to get even small part of all SAS procedures. Just following basic presentation functions are now integrated with PyODS class:</p>
+<p>There is no way to implement even a small fraction of all SAS procedures.<br>
+For now, only the basic presentation‑style functions are integrated with the <code>PyODS</code> class:</p>
 <ul>
-<li>proc_print: print table</li>
-<li>proc_figure: render graph from the python’s matplotlib figure</li>
+<li><strong>proc_print</strong> — print a table<br>
+</li>
+<li><strong>proc_figure</strong> — render a graph from a Python <code>matplotlib</code> figure</li>
 </ul>
-<p>along with a few functions having (very limited) functionality of corresponding SAS procedures:</p>
+<p>In addition, a few functions provide (very limited) functionality similar to their SAS counterparts:</p>
 <ul>
-<li>proc freq1: one dimensional frequency table(s)</li>
-<li>proc freq2: two dimensional frequency table(s)</li>
-<li>proc_contents: list contents of table - variables and their basic statistics</li>
+<li><strong>proc_freq1</strong> — one‑dimensional frequency table(s)<br>
+</li>
+<li><strong>proc_freq2</strong> — two‑dimensional frequency table(s)<br>
+</li>
+<li><strong>proc_contents</strong> — list the contents of a table: variables and their basic statistics<br>
+</li>
 <li>… more to come</li>
 </ul>
 </section>
 <section id="auxiliary-tools" class="level2">
 <h2 class="anchored" data-anchor-id="auxiliary-tools">Auxiliary tools</h2>
-<p>There are additional tools included in pyLikeSAS:</p>
+<p>Several additional tools are included in pyLikeSAS:</p>
 <ul>
-<li>PLS_logging - logging class for pyLikeSAS</li>
-<li>diagnostics/helper functions
+<li><strong>PLS_logging</strong> — logging class for pyLikeSAS<br>
+</li>
+<li><strong>diagnostics / helper functions</strong>, such as:
 <ul>
-<li>csv_info: get info about csv file</li>
-<li>sas_sample_datasets: download data from SAS sample site</li>
-<li>python environment info</li>
+<li><strong>csv_info</strong> — get information about a CSV file<br>
+</li>
+<li><strong>sas_sample_datasets</strong> — download data from the SAS sample site<br>
+</li>
+<li><strong>python environment info</strong> — report details about the current Python environment<br>
+</li>
 </ul></li>
 <li>… more to come</li>
 </ul>

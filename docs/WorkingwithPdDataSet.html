@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>workingwithpddataset</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./UsageofPdDataSetoptions.html" rel="next">
+<link href="./SampleDataFrame.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-6b946396810233e5ce30c40e93c9c235.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-2acffc712711a44db399ac0c8c49660f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guides</a></li><li class="breadcrumb-item"><a href="./WorkingwithPdDataSet.html">Working with PdDataSet</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./images/pyLikeSAS_logo.png" alt="pyLikeSAS Documentation" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./images/pyLikeSAS_logo.png" alt="pyLikeSAS Documentation" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
+      </a>
+      <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/PulpanJ/pyLikeSAS" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="mailto:pulpanj@volny.cz" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-envelope"></i></a>
+    <a href="./mybook.pdf" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-file-pdf"></i></a>
+</div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Purpose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Purpose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pyLikeSAS.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Features</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Usage Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./SampleDataFrame.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sample DataFrame</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./WorkingwithPdDataSet.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Working with PdDataSet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./UsageofPdDataSetoptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using PdDataSet Options</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ImplementationsofDataStep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Data Step</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#working-with-pddataset" id="toc-working-with-pddataset" class="nav-link active" data-scroll-target="#working-with-pddataset">Working with PdDataSet</a>
+  <ul>
+  <li><a href="#how-to-initialize-pddataset" id="toc-how-to-initialize-pddataset" class="nav-link" data-scroll-target="#how-to-initialize-pddataset">How to initialize PdDataSet</a></li>
+  <li><a href="#setting-labels-of-pddataset-columns" id="toc-setting-labels-of-pddataset-columns" class="nav-link" data-scroll-target="#setting-labels-of-pddataset-columns">Setting labels of PdDataset columns</a></li>
+  <li><a href="#setting-formats-of-pddataset-columns" id="toc-setting-formats-of-pddataset-columns" class="nav-link" data-scroll-target="#setting-formats-of-pddataset-columns">Setting formats of PdDataset columns</a></li>
+  <li><a href="#using-lookup_format-for-definition-of-format-functions" id="toc-using-lookup_format-for-definition-of-format-functions" class="nav-link" data-scroll-target="#using-lookup_format-for-definition-of-format-functions">Using lookup_format for definition of format functions</a></li>
+  <li><a href="#how-to-check-persistency-of-pddataset-attributes" id="toc-how-to-check-persistency-of-pddataset-attributes" class="nav-link" data-scroll-target="#how-to-check-persistency-of-pddataset-attributes">How to check persistency of PdDataSet attributes</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guides</a></li><li class="breadcrumb-item"><a href="./WorkingwithPdDataSet.html">Working with PdDataSet</a></li></ol></nav></header>
+
+
+
+
+<section id="working-with-pddataset" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-pddataset">Working with PdDataSet</h2>
+<p>PdDataSet (pandas dataset) object is small extension of pandas DataFrame, it appends following attributes to columns (variables):</p>
+<ul>
+<li><strong>label</strong> - descriptive label of the column to be used when PdDataSet is presented (printed)</li>
+<li><strong>format</strong> - descriptor that defines how the value in column will be presented (when printed)</li>
+<li>PdDataSet also support <strong>desc</strong> attribute which represents description of dataset (could be set e.g as title when printed).</li>
+</ul>
+<p>As child object of pandas DataFrame PdDataSet support all methods known to pandas DataFrame. Above attributes of PdDataSet are kept inside object, they are surfaced only when PdDataSet is printed (or used in the graph). When processing PdDataSet (by SQL or data step or using data set options) its attributes are inherited by the output PdDataSet.</p>
+<section id="how-to-initialize-pddataset" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-initialize-pddataset">How to initialize PdDataSet</h3>
+<ul>
+<li>Simplest variant - just pass pandas DataFrame</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize PdDataSet by passing pd.DataFrame</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> PdDataSet(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Using pandas DataFrame constructor</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize PdDataSet using pd.DataFrame constructor options</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>newcomers_tuples <span class="op">=</span> [</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Ferda'</span>, <span class="st">'M'</span>, <span class="dv">14</span>, <span class="fl">100.0</span>, <span class="fl">45.00</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'Manicka'</span>, <span class="st">'F'</span>, <span class="dv">13</span>, <span class="fl">91.0</span>, <span class="fl">40.00</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>newcomers_ds <span class="op">=</span> PdDataSet(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    newcomers_tuples,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Name'</span>, <span class="st">'Sex'</span>, <span class="st">'Age'</span>, <span class="st">'Weight'</span>, <span class="st">'Height'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Both above examples had instantiated PdDataSet object but did not set any additional attributes available to PdDataSet (so these are basically plain pandas DataFrame). Additional PdDataSet attributes are covered in following sections.</p>
+</section>
+<section id="setting-labels-of-pddataset-columns" class="level3">
+<h3 class="anchored" data-anchor-id="setting-labels-of-pddataset-columns">Setting labels of PdDataset columns</h3>
+<p>Label parameter allows to define descriptive labels of PdDataSet columns. It is just stored as PdDataSet attribute, i.e.&nbsp;original short column names are preserved, column labels are used only when PdDataSet is presented (e.g.&nbsp;by using proc_print).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> PdDataSet(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    df.head(<span class="dv">3</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span>{<span class="st">'Name'</span>: <span class="st">"Student's First Name"</span>, <span class="st">'Sex'</span>: <span class="st">"Student Gender"</span>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>proc_print(df1) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>PdDataSet rendered by proc_print in Jupyter notebook show columns with labels:</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 37%">
+<col style="width: 25%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">obs</th>
+<th style="text-align: left;">Student’s First Name</th>
+<th style="text-align: left;">Student Gender</th>
+<th style="text-align: right;">Age</th>
+<th style="text-align: right;">Height</th>
+<th style="text-align: right;">Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Alfred</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">112.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Alice</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">56.5</td>
+<td style="text-align: right;">84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Barbara</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">65.3</td>
+<td style="text-align: right;">98</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="setting-formats-of-pddataset-columns" class="level3">
+<h3 class="anchored" data-anchor-id="setting-formats-of-pddataset-columns">Setting formats of PdDataset columns</h3>
+<p>Format of variable, as it is known in SAS, is actually mapping of column’s values to the set of descriptive labels. Formats are applied when only data set is presented (e.g.&nbsp;printed by <strong>proc_print</strong>). Formats are persistent attributes of PdDataSet, i.e.&nbsp;these are preserved when PdDataSet is processed by <strong>SQL</strong> (used in the ds_options) or <strong>data_step</strong> function.</p>
+<p>Definition of mapping function in python is straightforward, also direct usage of python formatting (like <code>'{:,.1f}'</code>) is supported by inheriting it from pandas.</p>
+<ul>
+<li>Example of setting PdDataSet with formats</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read input df</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"./data/class.csv"</span>).head(<span class="dv">3</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># provide labels for values in the column Sex</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>gender_labels <span class="op">=</span> {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'M'</span>: <span class="st">'Male'</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'F'</span>: <span class="st">'Female'</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># define data set</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> PdDataSet(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span>{</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Name'</span>: <span class="st">"Name in upper case"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Age'</span>: <span class="st">"Age as binary"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Sex'</span>: <span class="st">"Gender as label"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span>{</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Name'</span>: <span class="kw">lambda</span> s: s.upper(),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Sex'</span>: <span class="kw">lambda</span> s: gender_labels.get(s),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Age'</span>:<span class="st">"</span><span class="sc">{0:b}</span><span class="st">"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Height'</span>: <span class="st">'</span><span class="sc">{:12.3f}</span><span class="st">'</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Weight'</span>: <span class="st">'</span><span class="sc">{:12.0f}</span><span class="st">'</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>proc_print(ds, template<span class="op">=</span><span class="st">'seaside'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>The resulting output rendered the data set as:</li>
+</ul>
+
+<style type="text/css">
+#T_a8152   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  text-align: left;
+  vertical-align: middle;
+  color: black;
+  font-family: Arial, 'Albany AMT', Helvetica, sans-serif;
+  font-size: 10pt;
+  font-style: normal;
+  font-weight: normal;
+  margin: 0;
+  padding: 5px;
+}
+#T_a8152 thead {
+  background-color: cornsilk;
+  color: black;
+}
+#T_a8152 th {
+  font-size: 120%;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  border: 1px solid black;
+}
+#T_a8152 td {
+  border: 1px solid black;
+  padding: 5px;
+}
+</style>
+<table id="T_a8152">
+<thead>
+<tr>
+<th class="blank level0">
+&nbsp;
+</th>
+<th id="T_a8152_level0_col0" class="col_heading level0 col0">
+Name in upper case
+</th>
+<th id="T_a8152_level0_col1" class="col_heading level0 col1">
+Gender as label
+</th>
+<th id="T_a8152_level0_col2" class="col_heading level0 col2">
+Age as binary
+</th>
+<th id="T_a8152_level0_col3" class="col_heading level0 col3">
+Height
+</th>
+<th id="T_a8152_level0_col4" class="col_heading level0 col4">
+Weight
+</th>
+</tr>
+<tr>
+<th class="index_name level0">
+obs
+</th>
+<th class="blank col0">
+&nbsp;
+</th>
+<th class="blank col1">
+&nbsp;
+</th>
+<th class="blank col2">
+&nbsp;
+</th>
+<th class="blank col3">
+&nbsp;
+</th>
+<th class="blank col4">
+&nbsp;
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th id="T_a8152_level0_row0" class="row_heading level0 row0">
+0
+</th>
+<td id="T_a8152_row0_col0" class="data row0 col0">
+ALFRED
+</td>
+<td id="T_a8152_row0_col1" class="data row0 col1">
+Male
+</td>
+<td id="T_a8152_row0_col2" class="data row0 col2">
+1110
+</td>
+<td id="T_a8152_row0_col3" class="data row0 col3">
+69.000
+</td>
+<td id="T_a8152_row0_col4" class="data row0 col4">
+112
+</td>
+</tr>
+<tr>
+<th id="T_a8152_level0_row1" class="row_heading level0 row1">
+1
+</th>
+<td id="T_a8152_row1_col0" class="data row1 col0">
+ALICE
+</td>
+<td id="T_a8152_row1_col1" class="data row1 col1">
+Female
+</td>
+<td id="T_a8152_row1_col2" class="data row1 col2">
+1101
+</td>
+<td id="T_a8152_row1_col3" class="data row1 col3">
+56.500
+</td>
+<td id="T_a8152_row1_col4" class="data row1 col4">
+84
+</td>
+</tr>
+<tr>
+<th id="T_a8152_level0_row2" class="row_heading level0 row2">
+2
+</th>
+<td id="T_a8152_row2_col0" class="data row2 col0">
+BARBARA
+</td>
+<td id="T_a8152_row2_col1" class="data row2 col1">
+Female
+</td>
+<td id="T_a8152_row2_col2" class="data row2 col2">
+1101
+</td>
+<td id="T_a8152_row2_col3" class="data row2 col3">
+65.300
+</td>
+<td id="T_a8152_row2_col4" class="data row2 col4">
+98
+</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="using-lookup_format-for-definition-of-format-functions" class="level3">
+<h3 class="anchored" data-anchor-id="using-lookup_format-for-definition-of-format-functions">Using lookup_format for definition of format functions</h3>
+<p>The beauty of SAS format is capability to handle unknown and missing values (by presenting them by predefined string values) or map ranges of values to labels for such bands.</p>
+<p>For that reason, pyLikeSAS provides <strong>lookup_format</strong> function capable to define custom formatting functions that cover handling of data ranges, the special label for missing value along with the label for unknown values (i.e.&nbsp;values not specifies in the format definition).</p>
+<p>SAS gurus are capable to define SAS format that use function output as value label. The same functionality is easy in python - it allows to define mapping functions for values, data ranges (including low label), and of course for missing and unknown values.</p>
+<p>Little bit elaborate example of these capabilities follows. Let start by appending some missing and unknown data to out sample dataframe:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read data to dataframe</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df0 <span class="op">=</span> pd.read_csv(<span class="st">"./data/class.csv"</span>).head(<span class="dv">3</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># add various missing/unknown values</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>new_row1 <span class="op">=</span> [<span class="st">'Old one'</span>, <span class="st">""</span>, <span class="dv">99</span>, np.nan, <span class="fl">12345.75</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>dfm1 <span class="op">=</span> pd.DataFrame(new_row1).T</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>dfm1.columns <span class="op">=</span> df0.columns</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>new_row2 <span class="op">=</span> [<span class="va">None</span>, <span class="st">''</span>, <span class="fl">14.5</span>, np.nan, np.nan]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>dfm2 <span class="op">=</span> pd.DataFrame(new_row2).T</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>dfm2.columns <span class="op">=</span> df0.columns</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>new_row3 <span class="op">=</span> [<span class="st">""</span>, <span class="st">'X'</span>, np.nan, np.nan, np.nan]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>dfm3 <span class="op">=</span> pd.DataFrame(new_row3).T</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>dfm3.columns <span class="op">=</span> df0.columns</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([dfm1, df0, dfm2, dfm3], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ori_sex'</span>] <span class="op">=</span> df[<span class="st">'Sex'</span>]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ori_age'</span>] <span class="op">=</span> df[<span class="st">'Age'</span>]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>which generates following dataframe:</p>
+<pre class="text"><code>      Name  Sex   Age Height    Weight ori_sex ori_age
+0  Old one        99    NaN  12345.75              99
+1   Alfred   M    14   69.0     112.5       M      14
+2    Alice   F    13   56.5      84.0       F      13
+3  Barbara   F    13   65.3      98.0       F      13
+4     None      14.5    NaN       NaN            14.5
+5            X   NaN    NaN       NaN       X     NaN</code></pre>
+<p>With missing and empty values in some columns user defined formatting functions should handle missing (None) values and cover all possible inputs.</p>
+<p>Following is the example of the (rather weird) custom formatting function to be used for Name column (that handle a short name and None value).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define function to be used for formatting Name column</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> my_last_upper(s): </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> s <span class="kw">is</span> <span class="va">None</span>: </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">'Missing name'</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(s)<span class="op">&lt;</span><span class="dv">2</span> :</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">'Short name repr(name):'</span><span class="op">+</span><span class="bu">repr</span>(s)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> s[<span class="dv">0</span>:<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>s[<span class="op">-</span><span class="dv">1</span>:].upper()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>my_last_upper(<span class="va">None</span>)     <span class="co">#-&gt; 'Missing name'</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>my_last_upper(<span class="st">''</span>)       <span class="co">#-&gt; "Short name repr(name):''"</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>my_last_upper(<span class="st">'john'</span>)  <span class="co">#-&gt; 'johN'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>By using <strong>lookup_format</strong> we can easily extend lamba function, that was used for formatting column Sex in the first example of formats, by the following definition of formatting function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># provide labels for values in the column Sex</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>gender_labels <span class="op">=</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'M'</span>: <span class="st">'Male'</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'F'</span>: <span class="st">'Female'</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#extend lookup_format to handle missing/unknown values </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># define function to be used for formatting</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>sex_labels <span class="op">=</span> lookup_format(</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    lookup<span class="op">=</span>gender_labels,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    missing<span class="op">=</span><span class="kw">lambda</span> s: <span class="st">'repr(sex) is:'</span><span class="op">+</span><span class="bu">repr</span>(s),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    unknown<span class="op">=</span><span class="kw">lambda</span> s: <span class="st">'unknown value:'</span><span class="op">+</span><span class="bu">str</span>(s)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>sex_labels(<span class="st">'F'</span>)     <span class="co"># -&gt; Female</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>sex_labels(<span class="st">'M'</span>)     <span class="co"># -&gt; Male</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>sex_labels(<span class="st">'X'</span>)     <span class="co"># -&gt; unknown value:X</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>sex_labels(<span class="st">''</span>)      <span class="co"># -&gt; "repr(sex) is:''"</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>sex_labels(<span class="va">None</span>)    <span class="co"># 'repr(sex) is:None'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If we want to format column Age by labels representing ranges of values, we can easily use <strong>lookup_format</strong> with lookup dictionary, that defines boundaries of required ranges, the <strong>low</strong> parameter that is used for values bellow the first range boundary (and also defines label for missing value).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define function to be used for formatting Age column into bands</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>age_bands <span class="op">=</span> lookup_format(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    lookup<span class="op">=</span>{</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="dv">13</span>: <span class="st">'Junior:13-&gt;15'</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="dv">15</span>: <span class="st">'Cadet: 15-&gt;20'</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="dv">20</span>: <span class="st">'Adult: 20-&gt;25'</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">25</span>: <span class="kw">lambda</span> s: <span class="st">'Adult 25+:'</span><span class="op">+</span><span class="bu">str</span>(s),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    low<span class="op">=</span><span class="st">'under 14'</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    missing<span class="op">=</span><span class="st">'Age is missing'</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">9</span>)        <span class="co"># -&gt; under 14</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">14</span>)       <span class="co"># -&gt; 'Junior:13-&gt;15'</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="fl">14.5</span>)     <span class="co"># -&gt; 'Junior:13-&gt;15'</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">15</span>)       <span class="co"># -&gt; 'Cadet: 15-&gt;20'</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">19</span>)       <span class="co"># -&gt;'Cadet: 15-&gt;20'</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">20</span>)       <span class="co"># -&gt; 'Cadet: 15-&gt;20'</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="dv">26</span>)       <span class="co"># -&gt; 'Adult 25+:26'</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>age_bands(<span class="va">None</span>)     <span class="co">#-&gt; Age is missing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>All these custom formatting functions could be used in format definition of PdDataset object.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pds <span class="op">=</span> PdDataSet(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span>{</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Name"</span>: my_last_upper,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Sex"</span>: sex_labels,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Age"</span>: age_bands,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span>{<span class="st">'Name'</span>: <span class="st">"Student's First Name"</span>, <span class="st">'Sex'</span>: <span class="st">"Student Gender"</span>},</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>PdDataset object with formats could be rendered by <strong>proc_print</strong> (the proc_print’s parameter <em>missing</em> defines representation of missing values that are not handled by the custom formatting functions):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>proc_print(pds, keep<span class="op">=</span><span class="st">'name sex age ori_sex ori_age Height'</span>, template<span class="op">=</span><span class="st">'html'</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           missing<span class="op">=</span>(<span class="st">'proc_print:numerical_none'</span>, <span class="st">'proc_print:string_none'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The following output is obtained when rendering such PdDataset object using above <strong>proc_print</strong> call:</p>
+
+<style type="text/css">
+#T_11a60   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  padding: 2px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 10pt;
+  font-family: Helvetica;
+  border-collapse: collapse;
+  border: none;
+}
+#T_11a60 thead {
+  background-color: royalblue;
+  color: white;
+}
+#T_11a60 tbody tr:nth-child(even) {
+  background-color: white;
+}
+#T_11a60 tbody tr:nth-child(odd) {
+  background-color: whitesmoke;
+}
+#T_11a60 td {
+  border: 1px solid black;
+  padding: 2px;
+  text-align: left;
+}
+#T_11a60 th {
+  font-size: 100%;
+  text-align: center;
+  padding: 0.5em;
+  border: 1px solid black;
+}
+#T_11a60 tr:hover {
+  background-color: midnightblue;
+  color: yellow;
+}
+#T_11a60 tbody tr:hover {
+  background-color: lavender;
+  color: black;
+  mix-blend-mode: difference;
+}
+#T_11a60 td:hover {
+  border-style:  outset;
+  background-color: lightgoldenrodyellow;
+  mix-blend-mode: exclusion;
+  border: 1px solid red;
+}
+#T_11a60 .index {
+  font-style: italic;
+  color: gold;
+  font-weight: normal;
+}
+#T_11a60 .index_name {
+  color: yellow;
+  font-style: italic;
+}
+#T_11a60 caption {
+  font-size: 120%;
+  font-style: bold;
+  caption-side: top;
+  text-align: left;
+  margin: 10;
+}
+</style>
+<table id="T_11a60">
+<thead>
+<tr>
+<th class="blank level0">
+&nbsp;
+</th>
+<th id="T_11a60_level0_col0" class="col_heading level0 col0">
+Student’s First Name
+</th>
+<th id="T_11a60_level0_col1" class="col_heading level0 col1">
+Student Gender
+</th>
+<th id="T_11a60_level0_col2" class="col_heading level0 col2">
+Age
+</th>
+<th id="T_11a60_level0_col3" class="col_heading level0 col3">
+ori_sex
+</th>
+<th id="T_11a60_level0_col4" class="col_heading level0 col4">
+ori_age
+</th>
+<th id="T_11a60_level0_col5" class="col_heading level0 col5">
+Height
+</th>
+</tr>
+<tr>
+<th class="index_name level0">
+obs
+</th>
+<th class="blank col0">
+&nbsp;
+</th>
+<th class="blank col1">
+&nbsp;
+</th>
+<th class="blank col2">
+&nbsp;
+</th>
+<th class="blank col3">
+&nbsp;
+</th>
+<th class="blank col4">
+&nbsp;
+</th>
+<th class="blank col5">
+&nbsp;
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th id="T_11a60_level0_row0" class="row_heading level0 row0">
+0
+</th>
+<td id="T_11a60_row0_col0" class="data row0 col0">
+Old onE
+</td>
+<td id="T_11a60_row0_col1" class="data row0 col1">
+repr(sex) is:’’
+</td>
+<td id="T_11a60_row0_col2" class="data row0 col2">
+Adult 25+:99
+</td>
+<td id="T_11a60_row0_col3" class="data row0 col3">
+</td>
+<td id="T_11a60_row0_col4" class="data row0 col4">
+99
+</td>
+<td id="T_11a60_row0_col5" class="data row0 col5">
+proc_print:numerical_none
+</td>
+</tr>
+<tr>
+<th id="T_11a60_level0_row1" class="row_heading level0 row1">
+1
+</th>
+<td id="T_11a60_row1_col0" class="data row1 col0">
+AlfreD
+</td>
+<td id="T_11a60_row1_col1" class="data row1 col1">
+Male
+</td>
+<td id="T_11a60_row1_col2" class="data row1 col2">
+Junior:13-&gt;15
+</td>
+<td id="T_11a60_row1_col3" class="data row1 col3">
+M
+</td>
+<td id="T_11a60_row1_col4" class="data row1 col4">
+14
+</td>
+<td id="T_11a60_row1_col5" class="data row1 col5">
+69.000000
+</td>
+</tr>
+<tr>
+<th id="T_11a60_level0_row2" class="row_heading level0 row2">
+2
+</th>
+<td id="T_11a60_row2_col0" class="data row2 col0">
+AlicE
+</td>
+<td id="T_11a60_row2_col1" class="data row2 col1">
+Female
+</td>
+<td id="T_11a60_row2_col2" class="data row2 col2">
+Junior:13-&gt;15
+</td>
+<td id="T_11a60_row2_col3" class="data row2 col3">
+F
+</td>
+<td id="T_11a60_row2_col4" class="data row2 col4">
+13
+</td>
+<td id="T_11a60_row2_col5" class="data row2 col5">
+56.500000
+</td>
+</tr>
+<tr>
+<th id="T_11a60_level0_row3" class="row_heading level0 row3">
+3
+</th>
+<td id="T_11a60_row3_col0" class="data row3 col0">
+BarbarA
+</td>
+<td id="T_11a60_row3_col1" class="data row3 col1">
+Female
+</td>
+<td id="T_11a60_row3_col2" class="data row3 col2">
+Junior:13-&gt;15
+</td>
+<td id="T_11a60_row3_col3" class="data row3 col3">
+F
+</td>
+<td id="T_11a60_row3_col4" class="data row3 col4">
+13
+</td>
+<td id="T_11a60_row3_col5" class="data row3 col5">
+65.300000
+</td>
+</tr>
+<tr>
+<th id="T_11a60_level0_row4" class="row_heading level0 row4">
+4
+</th>
+<td id="T_11a60_row4_col0" class="data row4 col0">
+Missing name
+</td>
+<td id="T_11a60_row4_col1" class="data row4 col1">
+repr(sex) is:’’
+</td>
+<td id="T_11a60_row4_col2" class="data row4 col2">
+Junior:13-&gt;15
+</td>
+<td id="T_11a60_row4_col3" class="data row4 col3">
+</td>
+<td id="T_11a60_row4_col4" class="data row4 col4">
+14.500000
+</td>
+<td id="T_11a60_row4_col5" class="data row4 col5">
+proc_print:numerical_none
+</td>
+</tr>
+<tr>
+<th id="T_11a60_level0_row5" class="row_heading level0 row5">
+5
+</th>
+<td id="T_11a60_row5_col0" class="data row5 col0">
+Short name repr(name):’’
+</td>
+<td id="T_11a60_row5_col1" class="data row5 col1">
+unknown value:X
+</td>
+<td id="T_11a60_row5_col2" class="data row5 col2">
+Age is missing
+</td>
+<td id="T_11a60_row5_col3" class="data row5 col3">
+X
+</td>
+<td id="T_11a60_row5_col4" class="data row5 col4">
+proc_print:string_none
+</td>
+<td id="T_11a60_row5_col5" class="data row5 col5">
+proc_print:numerical_none
+</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="how-to-check-persistency-of-pddataset-attributes" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-check-persistency-of-pddataset-attributes">How to check persistency of PdDataSet attributes</h3>
+<p>All PdDataSet constructor parameters are kept in <strong>_attrs</strong> attribute of pd.DataFrame and so these could be checked by the <strong>vars()</strong> function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> PdDataSet(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    df.head(<span class="dv">3</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    desc<span class="op">=</span><span class="st">'this is dataset description'</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span>{</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Name"</span>: my_upper</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span>{<span class="st">'Name'</span>: <span class="st">"Student's First Name"</span>, <span class="st">'Sex'</span>: <span class="st">"Student Gender"</span>}</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="bu">vars</span>(df1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Partial output of vars statement:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#...(more items)</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  Items: Index([<span class="st">'Name'</span>, <span class="st">'Sex'</span>, <span class="st">'Age'</span>, <span class="st">'Height'</span>, <span class="st">'Weight'</span>], dtype<span class="op">=</span><span class="st">'object'</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#...(more items)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'_attrs'</span>: {<span class="st">'desc'</span>: <span class="st">"this is dataset description"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'label'</span>: {<span class="st">'Name'</span>: <span class="st">"Student's First Name"</span>, <span class="st">'Sex'</span>: <span class="st">"Student Gender"</span>},</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">'format'</span>: {<span class="st">'Name'</span>: <span class="op">&lt;</span>function __main__.my_upper(s)<span class="op">&gt;</span>}},</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#...(more items)</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="./SampleDataFrame.html" class="pagination-link" aria-label="Sample DataFrame">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Sample DataFrame</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./UsageofPdDataSetoptions.html" class="pagination-link" aria-label="Using PdDataSet Options">
+        <span class="nav-page-text">Using PdDataSet Options</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

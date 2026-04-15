@@ -68,7 +68,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./Implementationsofdatastep.html" rel="next">
+<link href="./WorkingwithPdDataSet.html" rel="next">
 <link href="./pyLikeSAS.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -121,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guide</a></li><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Sample DataFrame</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guides</a></li><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Sample DataFrame</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -178,7 +178,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Usage Guide</span></a>
+ <span class="menu-text">Usage Guides</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -192,8 +192,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Implementationsofdatastep.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Implementation of data step</span></a>
+  <a href="./WorkingwithPdDataSet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with PdDataSet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./UsageofPdDataSetoptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using PdDataSet Options</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ImplementationsofDataStep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Data Step</span></a>
   </div>
 </li>
       </ul>
@@ -213,14 +225,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guide</a></li><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Sample DataFrame</a></li></ol></nav></header>
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Usage Guides</a></li><li class="breadcrumb-item"><a href="./SampleDataFrame.html">Sample DataFrame</a></li></ol></nav></header>
 
 
 
 
 <section id="sample-dataframe" class="level2">
 <h2 class="anchored" data-anchor-id="sample-dataframe">Sample DataFrame</h2>
-<p>Following CSV file <strong>class.csv</strong> is used for demonstration of pyLikeSAS functionalities in all examples:</p>
+<p>The following CSV file, <strong>class.csv</strong>, is used to demonstrate pyLikeSAS functionality in all examples.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Name<span class="op">,</span>Sex<span class="op">,</span>Age<span class="op">,</span>Height<span class="op">,</span>Weight</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Alfred<span class="op">,</span>M<span class="op">,</span><span class="dv">14</span><span class="op">,</span><span class="dv">69</span><span class="op">,</span><span class="fl">112.5</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Alice<span class="op">,</span>F<span class="op">,</span><span class="dv">13</span><span class="op">,</span><span class="fl">56.5</span><span class="op">,</span><span class="dv">84</span></span>
@@ -241,7 +253,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Ronald<span class="op">,</span>M<span class="op">,</span><span class="dv">15</span><span class="op">,</span><span class="dv">67</span><span class="op">,</span><span class="dv">133</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>Thomas<span class="op">,</span>M<span class="op">,</span><span class="dv">11</span><span class="op">,</span><span class="fl">57.5</span><span class="op">,</span><span class="dv">85</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>William<span class="op">,</span>M<span class="op">,</span><span class="dv">15</span><span class="op">,</span><span class="fl">66.5</span><span class="op">,</span><span class="dv">112</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Content of CSV file <strong>class.csv</strong> is equal to the famous SASHELP.CLASS sample table. See module <strong>pyLikeSAS.sas_sample_datasets.py</strong> if you need to download it. After that CSV file is read into pd.DataFrame using following code:</p>
+<p>Its content is identical to the well‑known <code>SASHELP.CLASS</code> sample table.<br>
+See the module <code>pyLikeSAS.sas_sample_datasets.py</code> if you need to download it.</p>
+<p>After downloading, the CSV file can be read into a <code>pd.DataFrame</code> using the following code:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import core of pyLikeSAS </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyLikeSAS.PdDataSet <span class="im">import</span> PdDataSet</span>
@@ -673,8 +687,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./Implementationsofdatastep.html" class="pagination-link" aria-label="Implementation of data step">
-        <span class="nav-page-text">Implementation of data step</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./WorkingwithPdDataSet.html" class="pagination-link" aria-label="Working with PdDataSet">
+        <span class="nav-page-text">Working with PdDataSet</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

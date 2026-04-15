@@ -143,7 +143,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Usage Guide</span></a>
+ <span class="menu-text">Usage Guides</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -157,8 +157,20 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./Implementationsofdatastep.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Implementation of data step</span></a>
+  <a href="./WorkingwithPdDataSet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with PdDataSet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./UsageofPdDataSetoptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using PdDataSet Options</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ImplementationsofDataStep.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Data Step</span></a>
   </div>
 </li>
       </ul>
@@ -176,8 +188,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#purpose" id="toc-purpose" class="nav-link active" data-scroll-target="#purpose">Purpose</a>
   <ul>
   <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a></li>
-  <li><a href="#what-was-goal-of-pylikesas-module" id="toc-what-was-goal-of-pylikesas-module" class="nav-link" data-scroll-target="#what-was-goal-of-pylikesas-module">What was goal of pyLikeSAS module</a></li>
-  <li><a href="#what-is-now-not-handled-in-pylikesas-module" id="toc-what-is-now-not-handled-in-pylikesas-module" class="nav-link" data-scroll-target="#what-is-now-not-handled-in-pylikesas-module">What is (now) not handled in pyLikeSAS module</a></li>
+  <li><a href="#what-was-the-goal-of-the-pylikesas-module" id="toc-what-was-the-goal-of-the-pylikesas-module" class="nav-link" data-scroll-target="#what-was-the-goal-of-the-pylikesas-module">What was the goal of the pyLikeSAS module</a></li>
+  <li><a href="#what-is-currently-not-handled-in-the-pylikesas-module" id="toc-what-is-currently-not-handled-in-the-pylikesas-module" class="nav-link" data-scroll-target="#what-is-currently-not-handled-in-the-pylikesas-module">What is (currently) not handled in the pyLikeSAS module</a></li>
+  <li><a href="#a-bit-of-history" id="toc-a-bit-of-history" class="nav-link" data-scroll-target="#a-bit-of-history">A bit of history</a></li>
+  <li><a href="#disclaimer" id="toc-disclaimer" class="nav-link" data-scroll-target="#disclaimer">Disclaimer</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -192,42 +206,53 @@ ul.task-list li input[type="checkbox"] {
 <h1>Purpose</h1>
 <section id="background" class="level2">
 <h2 class="anchored" data-anchor-id="background">Background</h2>
-<p>pyLikeSAS is my toy project. It started as part of my python learning and development path (back in Covid-19 years, followed by years of sporadic progress in my python adoption).</p>
-<p>And now … yes, currently implemented pyLikeSAS is pythonic version of SAS-like dataset, data step, ODS and a few simple procedures.</p>
-<p>So a tiny version of my dreamed involvement in development of the original SAS System did happened - just in python v3.12 instead of Lattice C. I did tap into the vast ecosystem of python open source modules, so starting in the way different place than a standard C libraries. Also I just followed SAS functionality and not invented all that old great SAS stuff. I did not need to care about performance and customers - it was all about my own learning and fun.</p>
-<p>Now it seems, pyLikeSAS turned into learning resource aimed to be consumed by two distinct groups. pyLikeSAS could help to:</p>
-<ul>
-<li>improve python skills of hard core SAS users (as the real programer can write <a href="https://www.astronom.cz/jch/realprg/RealProgramersDontUsePascal.html">Fortran code in any language</a> ) and</li>
-<li>demonstrate strengths of SAS to pythonic <a href="https://www.astronom.cz/jch/realprg/RealProgramersDontUsePascal.html">cake-eaters</a> https://pbm.com/~lindahl/real.programmers.html</li>
-</ul>
-<p>Hopefully, it enables both these groups to jump into projects coded in python while being confident that couple of things so well working in SAS will be fully in their hands and feel safely isolated from the ever changing python and its modules versions.</p>
-<p>My 20+ years experience with SAS workloads, that basically read/update data and generate outputs in various formats while logging detail log file was not easily replicated in my beginner python. It was the main motivation for PyODS and PLSlogger. In additions such python workloads are developed in Jupyter and later scheduled to be run in batch (i.e.&nbsp;like in terminal). So pyLikeSAS package is designed to be used in Jupyter notebooks or as the plain python sources with automatic switching of outputs. And of course SAS data step was really missing in the pandas world.</p>
-<p>In any case pyLikeSAS package is not intended to be used in the production code. That is why I am placing here the <strong>disclaimer</strong> (that I had been using in the old times even on the paid customer projects):</p>
-<p><em>This software is not designed or intended for use in on-line control of aircraft, air traffic, aircraft navigation or aircraft communications or in the design, construction, operation or maintenance of any nuclear facility.</em></p>
+<p>After more than 20 years of using the SAS System, when I started programming in Python I felt that I had lost many of the great features and capabilities that SAS provided.</p>
+<p>SAS workloads typically read or update datasets and then produce output datasets or reports in various formats, while logging all details to the log file.</p>
+<p>Replicating this workflow in my early Python code was not easy. I also struggled with changing Python versions and module dependencies, switching between development in Jupyter notebooks and scheduled batch jobs in plain Python scripts, and dealing with headaches related to output formats. And of course, the SAS data step was really missing in the pandas world.</p>
+<p>These were the main motivations for creating the pyLikeSAS package.</p>
+<p>And yes — the current pyLikeSAS implements a Pythonic version of SAS‑like datasets, the data step, ODS, and a few simple procedures.</p>
 </section>
-<section id="what-was-goal-of-pylikesas-module" class="level2">
-<h2 class="anchored" data-anchor-id="what-was-goal-of-pylikesas-module">What was goal of pyLikeSAS module</h2>
+<section id="what-was-the-goal-of-the-pylikesas-module" class="level2">
+<h2 class="anchored" data-anchor-id="what-was-the-goal-of-the-pylikesas-module">What was the goal of the pyLikeSAS module</h2>
 <ul>
-<li>implement SAS data set like formats and labels on columns of the DataFrame</li>
-<li>implement SAS data set options on top of DataFrame</li>
-<li>implement function that will process DataFrame like SAS data step</li>
-<li>implement capability to generate various outputs (formats/styles) in SAS ODS like fashion</li>
-<li>gradually implement couple of useful SAS PROCs as python functions</li>
-<li>having fun all the way along</li>
+<li>to have fun along the way</li>
+<li>to implement SAS‑like formats and column labels on top of a DataFrame</li>
+<li>to implement SAS dataset options on top of a DataFrame</li>
+<li>to implement a function that processes a DataFrame in a SAS‑data‑step‑like manner</li>
+<li>to implement the capability to generate various outputs (formats/styles) in a SAS ODS‑like fashion</li>
+<li>to allow the pyLikeSAS package to be used both in Jupyter notebooks and as plain Python source files, with automatic switching of output modes</li>
+<li>to gradually implement a few useful SAS PROCs as Python functions</li>
 </ul>
 </section>
-<section id="what-is-now-not-handled-in-pylikesas-module" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-now-not-handled-in-pylikesas-module">What is (now) not handled in pyLikeSAS module</h2>
+<section id="what-is-currently-not-handled-in-the-pylikesas-module" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-currently-not-handled-in-the-pylikesas-module">What is (currently) not handled in the pyLikeSAS module</h2>
 <ul>
-<li>performance, could be improved (or even tested)…</li>
-<li>support for date/time columns (in simple, deficient, but elegant SAS manner)</li>
-<li>more input/output data sets in the data step</li>
-<li>definition of user styles in PyODS</li>
-<li>PyODS prints in python dict format (prettyprint not json)</li>
-<li>support of graphical outputs using terminalplot package</li>
-<li>any kind of rtf format support</li>
-<li>many more items still not spotted yet …</li>
+<li>performance (it could be improved — or even tested…)</li>
+<li>support for date/time columns (in the simple, limited, but elegant SAS style)</li>
+<li>multiple input/output datasets in a single data step</li>
+<li>user‑defined styles in PyODS</li>
+<li>PyODS output formatting (currently printed as Python dicts — pretty‑printed, not JSON)</li>
+<li>graphical output support using the terminalplot package</li>
+<li>any kind of RTF format support</li>
+<li>many more items not yet discovered…</li>
 </ul>
+</section>
+<section id="a-bit-of-history" class="level2">
+<h2 class="anchored" data-anchor-id="a-bit-of-history">A bit of history</h2>
+<p>pyLikeSAS is my toy project. It began as part of my Python learning and development journey during the Covid‑19 years, followed by several years of only sporadic progress in adopting Python. Now that I am retired, I finally have time to tinker with a project like this (which is definitely unusual in today’s AI‑driven world).</p>
+<p>Over time, pyLikeSAS has evolved into a learning resource aimed at two distinct groups. pyLikeSAS can help to:</p>
+<ul>
+<li><p>improve the Python skills of hard‑core SAS users (after all, a real programmer can write <a href="https://www.astronom.cz/jch/realprg/RealProgramersDontUsePascal.html">Fortran code in any language</a> in any language), and</p></li>
+<li><p>demonstrate the strengths of SAS to Pythonic <a href="https://www.astronom.cz/jch/realprg/RealProgramersDontUsePascal.html">“cake‑eaters”</a> (For programmers born after 1990, a more readable version is <a href="https://pbm.com/~lindahl/real.programmers.html">here</a>).</p></li>
+</ul>
+<p>Hopefully, pyLikeSAS enables both groups to jump into Python‑based projects while staying confident that several things that work so well in SAS will remain fully under their control — and safely isolated from the ever‑changing versions of Python and its modules.</p>
+<p>In a way, a tiny version of my dreamed‑of involvement in the development of the original SAS System did happen — just in Python 3.12 instead of Lattice C. I tapped into the vast ecosystem of Python open‑source modules, starting from a very different place than standard C libraries. And of course, I simply followed SAS functionality rather than reinventing all that great old SAS stuff myself.</p>
+<p>I didn’t need to worry about performance or customers — it was all about my own learning and fun.</p>
+</section>
+<section id="disclaimer" class="level2">
+<h2 class="anchored" data-anchor-id="disclaimer">Disclaimer</h2>
+<p>In any case, the pyLikeSAS package is not intended for use in critical production code. That is why I am including this <strong>disclaimer</strong> (the same one I used in the old days, even on paid customer projects):</p>
+<p><em>This software is not designed or intended for use in the on‑line control of aircraft, air traffic, aircraft navigation, or aircraft communications, or in the design, construction, operation, or maintenance of any nuclear facility.</em></p>
 
 
 </section>
