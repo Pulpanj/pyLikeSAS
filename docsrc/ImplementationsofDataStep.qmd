@@ -1,0 +1,857 @@
+# Running Data Step with PdDataSet  
+
+## Logic of the SAS Data Step
+
+Ultimate goal of SAS data processing (apart from SQLs nad PROCs) is running data
+step. Data step is basically sequential processing of (rows of) input dataset
+during which variables (columns) are modified/appended with complex logic
+frequently based on the following data step rules:
+
+- every input row is processed independently (variables are read from input
+     table). Order in which input rows are processed is defined by **by**
+     parameter - that lists ordering variables.
+- the new derived variables could be defined in data step - but these has to
+     be set within processing of one row in data step. Their state is reset for
+     the next row of input.
+- only variables that keep their state during whole iteration over input rows
+    are retained variables (variables defined only within data step - not read
+    from input dataset). Retain variables should be defined as such and their initial value is usually set at the start of processing.
+- There is special (automatic) variable **_\_n\__** that is order of input row
+    that is currently processed.
+- Similar to the (automatic) variable **_\_n\__** are (automatic) flag variables
+    **first._order_variable_** (and **last._order_variable_**) that indicates
+    that particular ordering variable has the next value in the groups in sorted
+    input rows (or has the last value in the groups). These variables allow to
+    define complex group by processing  only partially available in SQL window
+    function.
+- row is (conditionally) written to output that could consist from subset of
+    input variables/derived/retained variables.
+
+Data step programming is very useful concept - when fully mastered it is hard to
+beat its simplicity,clarity and debugging enablement (when compared to SQL or
+DataFrame frameworks). Its implementation in pyLikeSAS is based on  definition
+of python function that represent data step logic. That function is set as
+functional parameter of **pyLikeSAS.data_step()** function - that allows to
+define input/output data sets (and their dataset options), required ordering of
+input data set, retained variables, etc.
+
+There should be two values returned by
+data step logic function, one is True/False flag indications that processed
+output row should be preserved/dropped.
+Current implementation supports just one output data set (and one input dataset)
+
+- that could be overcome by using **sql** parameter in the data set options of
+input data set.
+
+*(this is currently weakest point of pyLikeSAS -
+should be changed to allow more output rows from one call of data step logic
+function)*.
+
+## Simple Data Step example
+
+Simplest example follows (note use of data set option on PdDataSet objects):
+
+```python
+def simple_BMI(
+        # here we list all input variables (read from input data set) 
+        Name,  Age,  Height, Weight,
+        # here we are adding retain variables (with initial values)
+        ith_14plus,
+        # here are all automatic variables (to be optionally in data step logic)
+        _n_
+):
+    #    define conversion to cm/kg and set BMI for one row of class dataframe 
+    #   + some game resembling SAS data step goodies
+    # https://www.calculatorsoup.com/calculators/health/bmi-calculator.php
+
+
+    Height = Height*2.54/100
+    Weight = Weight*0.45359237
+    # here we set value  new (potentially) output variables 
+    # (defined in data step  logic)    
+    # record input order into new variable
+    nOBS = _n_+1  #SAS style nobs...
+    BMI = Weight/(Height)**2
+    # only cases older than 14 years are kept in output dataset
+    if Age>14:
+        # usage of retain variable
+        ith_14plus += 1
+        return True,locals()
+    else:
+        return 0, locals()
+
+# read input df
+df = PdDataSet(pd.read_csv("./data/class.csv").head(18))
+df
+
+dfout = data_step(
+    df.ds_options(drop='sex'),
+    data_step_code_function=simple_BMI,
+    # keep list of variables to be passed to output dataset
+    keep=[
+        'nOBS', 'Name', 'Age',    'BMI','ith_14plus'
+    ],
+    retain={'ith_14plus':0},
+    format={ 'ith_14plus': "{:.1f}"}
+)
+
+proc_print(dfout.ds_options(format={'BMI': "{:.1f}"}),template='seaside')
+
+```
+
+which of course generates output data set similar to SQL result shown  in example of data set options.
+Its additional variable **ith_14plus** would be available in SQL example only after using some window functions (or aggregations).
+
+<html>
+<style type="text/css">
+#T_66f3d   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  text-align: left;
+  vertical-align: middle;
+  color: black;
+  font-family: Arial, 'Albany AMT', Helvetica, sans-serif;
+  font-size: 10pt;
+  font-style: normal;
+  font-weight: normal;
+  margin: 0;
+  padding: 5px;
+}
+#T_66f3d thead {
+  background-color: cornsilk;
+  color: black;
+}
+#T_66f3d th {
+  font-size: 120%;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  border: 1px solid black;
+}
+#T_66f3d td {
+  border: 1px solid black;
+  padding: 5px;
+}
+</style>
+<table id="T_66f3d">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_66f3d_level0_col0" class="col_heading level0 col0" >nOBS</th>
+      <th id="T_66f3d_level0_col1" class="col_heading level0 col1" >Name</th>
+      <th id="T_66f3d_level0_col2" class="col_heading level0 col2" >Age</th>
+      <th id="T_66f3d_level0_col3" class="col_heading level0 col3" >BMI</th>
+      <th id="T_66f3d_level0_col4" class="col_heading level0 col4" >ith_14plus</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >obs</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_66f3d_level0_row0" class="row_heading level0 row0" >7</th>
+      <td id="T_66f3d_row0_col0" class="data row0 col0" >8</td>
+      <td id="T_66f3d_row0_col1" class="data row0 col1" >Janet</td>
+      <td id="T_66f3d_row0_col2" class="data row0 col2" >15</td>
+      <td id="T_66f3d_row0_col3" class="data row0 col3" >20.2</td>
+      <td id="T_66f3d_row0_col4" class="data row0 col4" >1</td>
+    </tr>
+    <tr>
+      <th id="T_66f3d_level0_row1" class="row_heading level0 row1" >13</th>
+      <td id="T_66f3d_row1_col0" class="data row1 col0" >14</td>
+      <td id="T_66f3d_row1_col1" class="data row1 col1" >Mary</td>
+      <td id="T_66f3d_row1_col2" class="data row1 col2" >15</td>
+      <td id="T_66f3d_row1_col3" class="data row1 col3" >17.8</td>
+      <td id="T_66f3d_row1_col4" class="data row1 col4" >2</td>
+    </tr>
+    <tr>
+      <th id="T_66f3d_level0_row2" class="row_heading level0 row2" >14</th>
+      <td id="T_66f3d_row2_col0" class="data row2 col0" >15</td>
+      <td id="T_66f3d_row2_col1" class="data row2 col1" >Philip</td>
+      <td id="T_66f3d_row2_col2" class="data row2 col2" >16</td>
+      <td id="T_66f3d_row2_col3" class="data row2 col3" >20.3</td>
+      <td id="T_66f3d_row2_col4" class="data row2 col4" >3</td>
+    </tr>
+    <tr>
+      <th id="T_66f3d_level0_row3" class="row_heading level0 row3" >16</th>
+      <td id="T_66f3d_row3_col0" class="data row3 col0" >17</td>
+      <td id="T_66f3d_row3_col1" class="data row3 col1" >Ronald</td>
+      <td id="T_66f3d_row3_col2" class="data row3 col2" >15</td>
+      <td id="T_66f3d_row3_col3" class="data row3 col3" >20.8</td>
+      <td id="T_66f3d_row3_col4" class="data row3 col4" >4</td>
+    </tr>
+    <tr>
+      <th id="T_66f3d_level0_row4" class="row_heading level0 row4" >18</th>
+      <td id="T_66f3d_row4_col0" class="data row4 col0" >19</td>
+      <td id="T_66f3d_row4_col1" class="data row4 col1" >William</td>
+      <td id="T_66f3d_row4_col2" class="data row4 col2" >15</td>
+      <td id="T_66f3d_row4_col3" class="data row4 col3" >17.8</td>
+      <td id="T_66f3d_row4_col4" class="data row4 col4" >5</td>
+    </tr>
+  </tbody>
+</table>
+</html>
+
+## More complete Data Step example
+
+Second - more complex - data step example  demonstrates usage of following features of data step (implementation in pyLikeSAS):
+
+- **by** processing including **first**/**last** flag variables
+- usage of  **retain** variables
+- using native python object in the data step logic
+- usage of **keep**/**label** for output variables
+
+```python
+"""
+    test of pyLikeSAS.data_step using BMI index calculation
+    and other bag of SAS tricks
+"""
+
+
+# function that converts BMI to message 
+def bmi_label(value):
+    # Function to categorize weight :
+    if value < 18.5:
+        return "Underweight"
+    elif 18.5 <= value < 25.0:
+        return "Normal"
+    elif 25.0 <= value < 40:
+        return "Overweight"
+    else:
+        return "Obese"
+
+
+def inch_pounds(
+        # data step automatic variables
+        _n_, first, last, *,
+        # input data set variables + retain variables
+        Name,  Age, Sex, Height, Weight, sumBMI, BMI, nOBS
+):
+    """
+        define conversion to cm/kg and set BMI for one row of class dataframe 
+        + some game resembling SAS data step goodies
+         _n_, first, last, * are comnpulsory "SAS automatic" variables
+        the rest of var are
+            -  columns of the input dataframe (in any order)
+            - retain variables  (see retain parameter of data_step function)
+    """
+    nOBS = _n_+1  # SAS style nobs...
+    Height = Height*2.54/100
+    Weight = Weight*0.45359237
+    BMI = Weight/(Height)**2
+    msg = bmi_label(BMI)
+    # skip row with Mary
+    if Name == 'Mary':
+        return 0, locals()
+
+    Surname = surname_dict.get(Name, 'n/a')
+    if Surname == 'n/a':
+        surname_dict[Name] = 'Unknown aged:'+str(Age)
+    if Sex == 'M':
+        Name = 'Mr. '+Name
+    else:
+        Name = 'Miss '+Name
+
+    #  first/last processing: note nice  SAS syntax and their immutability
+    # print(type(first.Sex))
+    if first.Sex:
+        sumBMI = 0.
+    sumBMI = sumBMI+BMI
+    first_Sex = first.Sex
+    # print(type(first_Sex))
+    first_Age = first.Age
+    last_Sex = last.Sex
+    last_Age = last.Age
+    return 1, locals()
+
+
+# read input df
+df = pd.read_csv("./data/class.csv")
+df
+
+# define objects to be used pythonically in data step logic inch_pounds
+surname_dict = {'Alice': 'Caroll', 'James': 'Joyce'}
+
+dfout = data_step(
+    df,
+    data_step_code_function=inch_pounds,
+    retain={'BMI': 0, 'sumBMI': 0, 'nOBS': 0},
+    # output dataframe columns order is defined by order in function or by keep
+    keep=[
+        'nOBS', 'Sex', 'Age',  'Name', 'Surname',  'BMI', 'sumBMI',
+        'first_Sex', 'first_Age', 'last_Sex', 'last_Age'
+    ],
+    label={'Name': "Student's First Name", 'Sex': "Student Gender"},
+    # or use drop=['Sex'],
+    by=['Sex', 'Age'],
+    by_order=[True, False]
+)
+proc_print(dfout)
+```
+
+Output dataset contains BMI, cumulative sum of BMI (over gender), first/last flag variables, all sorted by sex and (descending) age.
+
+<!-- \blandscape -->
+\tiny
+
+<html>
+<style type="text/css">
+#T_c8fbc   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  padding: 2px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 10pt;
+  font-family: Helvetica;
+  border-collapse: collapse;
+  border: none;
+}
+#T_c8fbc thead {
+  background-color: royalblue;
+  color: white;
+}
+#T_c8fbc tbody tr:nth-child(even) {
+  background-color: white;
+}
+#T_c8fbc tbody tr:nth-child(odd) {
+  background-color: whitesmoke;
+}
+#T_c8fbc td {
+  border: 1px solid black;
+  padding: 2px;
+  text-align: left;
+}
+#T_c8fbc th {
+  font-size: 100%;
+  text-align: center;
+  padding: 0.5em;
+  border: 1px solid black;
+}
+#T_c8fbc tr:hover {
+  background-color: midnightblue;
+  color: yellow;
+}
+#T_c8fbc tbody tr:hover {
+  background-color: lavender;
+  color: black;
+  mix-blend-mode: difference;
+}
+#T_c8fbc td:hover {
+  border-style:  outset;
+  background-color: lightgoldenrodyellow;
+  mix-blend-mode: exclusion;
+  border: 1px solid red;
+}
+#T_c8fbc .index {
+  font-style: italic;
+  color: gold;
+  font-weight: normal;
+}
+#T_c8fbc .index_name {
+  color: yellow;
+  font-style: italic;
+}
+#T_c8fbc caption {
+  font-size: 120%;
+  font-style: bold;
+  caption-side: top;
+  text-align: left;
+  margin: 10;
+}
+</style>
+<table id="T_c8fbc">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_c8fbc_level0_col0" class="col_heading level0 col0" >nOBS</th>
+      <th id="T_c8fbc_level0_col1" class="col_heading level0 col1" >Student Gender</th>
+      <th id="T_c8fbc_level0_col2" class="col_heading level0 col2" >Age</th>
+      <th id="T_c8fbc_level0_col3" class="col_heading level0 col3" >Student's First Name</th>
+      <th id="T_c8fbc_level0_col4" class="col_heading level0 col4" >Surname</th>
+      <th id="T_c8fbc_level0_col5" class="col_heading level0 col5" >BMI</th>
+      <th id="T_c8fbc_level0_col6" class="col_heading level0 col6" >sumBMI</th>
+      <th id="T_c8fbc_level0_col7" class="col_heading level0 col7" >first_Sex</th>
+      <th id="T_c8fbc_level0_col8" class="col_heading level0 col8" >first_Age</th>
+      <th id="T_c8fbc_level0_col9" class="col_heading level0 col9" >last_Sex</th>
+      <th id="T_c8fbc_level0_col10" class="col_heading level0 col10" >last_Age</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >obs</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+      <th class="blank col6" >&nbsp;</th>
+      <th class="blank col7" >&nbsp;</th>
+      <th class="blank col8" >&nbsp;</th>
+      <th class="blank col9" >&nbsp;</th>
+      <th class="blank col10" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_c8fbc_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_c8fbc_row0_col0" class="data row0 col0" >1</td>
+      <td id="T_c8fbc_row0_col1" class="data row0 col1" >F</td>
+      <td id="T_c8fbc_row0_col2" class="data row0 col2" >15</td>
+      <td id="T_c8fbc_row0_col3" class="data row0 col3" >Miss Janet</td>
+      <td id="T_c8fbc_row0_col4" class="data row0 col4" >n/a</td>
+      <td id="T_c8fbc_row0_col5" class="data row0 col5" >20.248404</td>
+      <td id="T_c8fbc_row0_col6" class="data row0 col6" >20.248404</td>
+      <td id="T_c8fbc_row0_col7" class="data row0 col7" >1.000000</td>
+      <td id="T_c8fbc_row0_col8" class="data row0 col8" >1.000000</td>
+      <td id="T_c8fbc_row0_col9" class="data row0 col9" >0.000000</td>
+      <td id="T_c8fbc_row0_col10" class="data row0 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row1" class="row_heading level0 row1" >2</th>
+      <td id="T_c8fbc_row1_col0" class="data row1 col0" >3</td>
+      <td id="T_c8fbc_row1_col1" class="data row1 col1" >F</td>
+      <td id="T_c8fbc_row1_col2" class="data row1 col2" >14</td>
+      <td id="T_c8fbc_row1_col3" class="data row1 col3" >Miss Carol</td>
+      <td id="T_c8fbc_row1_col4" class="data row1 col4" >n/a</td>
+      <td id="T_c8fbc_row1_col5" class="data row1 col5" >18.272707</td>
+      <td id="T_c8fbc_row1_col6" class="data row1 col6" >38.521111</td>
+      <td id="T_c8fbc_row1_col7" class="data row1 col7" >0.000000</td>
+      <td id="T_c8fbc_row1_col8" class="data row1 col8" >1.000000</td>
+      <td id="T_c8fbc_row1_col9" class="data row1 col9" >0.000000</td>
+      <td id="T_c8fbc_row1_col10" class="data row1 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row2" class="row_heading level0 row2" >3</th>
+      <td id="T_c8fbc_row2_col0" class="data row2 col0" >4</td>
+      <td id="T_c8fbc_row2_col1" class="data row2 col1" >F</td>
+      <td id="T_c8fbc_row2_col2" class="data row2 col2" >14</td>
+      <td id="T_c8fbc_row2_col3" class="data row2 col3" >Miss Judy</td>
+      <td id="T_c8fbc_row2_col4" class="data row2 col4" >n/a</td>
+      <td id="T_c8fbc_row2_col5" class="data row2 col5" >15.304490</td>
+      <td id="T_c8fbc_row2_col6" class="data row2 col6" >53.825601</td>
+      <td id="T_c8fbc_row2_col7" class="data row2 col7" >0.000000</td>
+      <td id="T_c8fbc_row2_col8" class="data row2 col8" >0.000000</td>
+      <td id="T_c8fbc_row2_col9" class="data row2 col9" >0.000000</td>
+      <td id="T_c8fbc_row2_col10" class="data row2 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row3" class="row_heading level0 row3" >4</th>
+      <td id="T_c8fbc_row3_col0" class="data row3 col0" >5</td>
+      <td id="T_c8fbc_row3_col1" class="data row3 col1" >F</td>
+      <td id="T_c8fbc_row3_col2" class="data row3 col2" >13</td>
+      <td id="T_c8fbc_row3_col3" class="data row3 col3" >Miss Alice</td>
+      <td id="T_c8fbc_row3_col4" class="data row3 col4" >Caroll</td>
+      <td id="T_c8fbc_row3_col5" class="data row3 col5" >18.500382</td>
+      <td id="T_c8fbc_row3_col6" class="data row3 col6" >72.325983</td>
+      <td id="T_c8fbc_row3_col7" class="data row3 col7" >0.000000</td>
+      <td id="T_c8fbc_row3_col8" class="data row3 col8" >1.000000</td>
+      <td id="T_c8fbc_row3_col9" class="data row3 col9" >0.000000</td>
+      <td id="T_c8fbc_row3_col10" class="data row3 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row4" class="row_heading level0 row4" >5</th>
+      <td id="T_c8fbc_row4_col0" class="data row4 col0" >6</td>
+      <td id="T_c8fbc_row4_col1" class="data row4 col1" >F</td>
+      <td id="T_c8fbc_row4_col2" class="data row4 col2" >13</td>
+      <td id="T_c8fbc_row4_col3" class="data row4 col3" >Miss Barbara</td>
+      <td id="T_c8fbc_row4_col4" class="data row4 col4" >n/a</td>
+      <td id="T_c8fbc_row4_col5" class="data row4 col5" >16.158388</td>
+      <td id="T_c8fbc_row4_col6" class="data row4 col6" >88.484371</td>
+      <td id="T_c8fbc_row4_col7" class="data row4 col7" >0.000000</td>
+      <td id="T_c8fbc_row4_col8" class="data row4 col8" >0.000000</td>
+      <td id="T_c8fbc_row4_col9" class="data row4 col9" >0.000000</td>
+      <td id="T_c8fbc_row4_col10" class="data row4 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row5" class="row_heading level0 row5" >6</th>
+      <td id="T_c8fbc_row5_col0" class="data row5 col0" >7</td>
+      <td id="T_c8fbc_row5_col1" class="data row5 col1" >F</td>
+      <td id="T_c8fbc_row5_col2" class="data row5 col2" >12</td>
+      <td id="T_c8fbc_row5_col3" class="data row5 col3" >Miss Jane</td>
+      <td id="T_c8fbc_row5_col4" class="data row5 col4" >n/a</td>
+      <td id="T_c8fbc_row5_col5" class="data row5 col5" >16.613175</td>
+      <td id="T_c8fbc_row5_col6" class="data row5 col6" >105.097546</td>
+      <td id="T_c8fbc_row5_col7" class="data row5 col7" >0.000000</td>
+      <td id="T_c8fbc_row5_col8" class="data row5 col8" >1.000000</td>
+      <td id="T_c8fbc_row5_col9" class="data row5 col9" >0.000000</td>
+      <td id="T_c8fbc_row5_col10" class="data row5 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row6" class="row_heading level0 row6" >7</th>
+      <td id="T_c8fbc_row6_col0" class="data row6 col0" >8</td>
+      <td id="T_c8fbc_row6_col1" class="data row6 col1" >F</td>
+      <td id="T_c8fbc_row6_col2" class="data row6 col2" >12</td>
+      <td id="T_c8fbc_row6_col3" class="data row6 col3" >Miss Louise</td>
+      <td id="T_c8fbc_row6_col4" class="data row6 col4" >n/a</td>
+      <td id="T_c8fbc_row6_col5" class="data row6 col5" >17.079386</td>
+      <td id="T_c8fbc_row6_col6" class="data row6 col6" >122.176932</td>
+      <td id="T_c8fbc_row6_col7" class="data row6 col7" >0.000000</td>
+      <td id="T_c8fbc_row6_col8" class="data row6 col8" >0.000000</td>
+      <td id="T_c8fbc_row6_col9" class="data row6 col9" >0.000000</td>
+      <td id="T_c8fbc_row6_col10" class="data row6 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row7" class="row_heading level0 row7" >8</th>
+      <td id="T_c8fbc_row7_col0" class="data row7 col0" >9</td>
+      <td id="T_c8fbc_row7_col1" class="data row7 col1" >F</td>
+      <td id="T_c8fbc_row7_col2" class="data row7 col2" >11</td>
+      <td id="T_c8fbc_row7_col3" class="data row7 col3" >Miss Joyce</td>
+      <td id="T_c8fbc_row7_col4" class="data row7 col4" >n/a</td>
+      <td id="T_c8fbc_row7_col5" class="data row7 col5" >13.491336</td>
+      <td id="T_c8fbc_row7_col6" class="data row7 col6" >135.668267</td>
+      <td id="T_c8fbc_row7_col7" class="data row7 col7" >0.000000</td>
+      <td id="T_c8fbc_row7_col8" class="data row7 col8" >1.000000</td>
+      <td id="T_c8fbc_row7_col9" class="data row7 col9" >1.000000</td>
+      <td id="T_c8fbc_row7_col10" class="data row7 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row8" class="row_heading level0 row8" >9</th>
+      <td id="T_c8fbc_row8_col0" class="data row8 col0" >10</td>
+      <td id="T_c8fbc_row8_col1" class="data row8 col1" >M</td>
+      <td id="T_c8fbc_row8_col2" class="data row8 col2" >16</td>
+      <td id="T_c8fbc_row8_col3" class="data row8 col3" >Mr. Philip</td>
+      <td id="T_c8fbc_row8_col4" class="data row8 col4" >n/a</td>
+      <td id="T_c8fbc_row8_col5" class="data row8 col5" >20.343448</td>
+      <td id="T_c8fbc_row8_col6" class="data row8 col6" >20.343448</td>
+      <td id="T_c8fbc_row8_col7" class="data row8 col7" >1.000000</td>
+      <td id="T_c8fbc_row8_col8" class="data row8 col8" >1.000000</td>
+      <td id="T_c8fbc_row8_col9" class="data row8 col9" >0.000000</td>
+      <td id="T_c8fbc_row8_col10" class="data row8 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row9" class="row_heading level0 row9" >10</th>
+      <td id="T_c8fbc_row9_col0" class="data row9 col0" >11</td>
+      <td id="T_c8fbc_row9_col1" class="data row9 col1" >M</td>
+      <td id="T_c8fbc_row9_col2" class="data row9 col2" >15</td>
+      <td id="T_c8fbc_row9_col3" class="data row9 col3" >Mr. Ronald</td>
+      <td id="T_c8fbc_row9_col4" class="data row9 col4" >n/a</td>
+      <td id="T_c8fbc_row9_col5" class="data row9 col5" >20.830531</td>
+      <td id="T_c8fbc_row9_col6" class="data row9 col6" >41.173980</td>
+      <td id="T_c8fbc_row9_col7" class="data row9 col7" >0.000000</td>
+      <td id="T_c8fbc_row9_col8" class="data row9 col8" >1.000000</td>
+      <td id="T_c8fbc_row9_col9" class="data row9 col9" >0.000000</td>
+      <td id="T_c8fbc_row9_col10" class="data row9 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row10" class="row_heading level0 row10" >11</th>
+      <td id="T_c8fbc_row10_col0" class="data row10 col0" >12</td>
+      <td id="T_c8fbc_row10_col1" class="data row10 col1" >M</td>
+      <td id="T_c8fbc_row10_col2" class="data row10 col2" >15</td>
+      <td id="T_c8fbc_row10_col3" class="data row10 col3" >Mr. William</td>
+      <td id="T_c8fbc_row10_col4" class="data row10 col4" >n/a</td>
+      <td id="T_c8fbc_row10_col5" class="data row10 col5" >17.806273</td>
+      <td id="T_c8fbc_row10_col6" class="data row10 col6" >58.980253</td>
+      <td id="T_c8fbc_row10_col7" class="data row10 col7" >0.000000</td>
+      <td id="T_c8fbc_row10_col8" class="data row10 col8" >0.000000</td>
+      <td id="T_c8fbc_row10_col9" class="data row10 col9" >0.000000</td>
+      <td id="T_c8fbc_row10_col10" class="data row10 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row11" class="row_heading level0 row11" >12</th>
+      <td id="T_c8fbc_row11_col0" class="data row11 col0" >13</td>
+      <td id="T_c8fbc_row11_col1" class="data row11 col1" >M</td>
+      <td id="T_c8fbc_row11_col2" class="data row11 col2" >14</td>
+      <td id="T_c8fbc_row11_col3" class="data row11 col3" >Mr. Alfred</td>
+      <td id="T_c8fbc_row11_col4" class="data row11 col4" >n/a</td>
+      <td id="T_c8fbc_row11_col5" class="data row11 col5" >16.613175</td>
+      <td id="T_c8fbc_row11_col6" class="data row11 col6" >75.593428</td>
+      <td id="T_c8fbc_row11_col7" class="data row11 col7" >0.000000</td>
+      <td id="T_c8fbc_row11_col8" class="data row11 col8" >1.000000</td>
+      <td id="T_c8fbc_row11_col9" class="data row11 col9" >0.000000</td>
+      <td id="T_c8fbc_row11_col10" class="data row11 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row12" class="row_heading level0 row12" >13</th>
+      <td id="T_c8fbc_row12_col0" class="data row12 col0" >14</td>
+      <td id="T_c8fbc_row12_col1" class="data row12 col1" >M</td>
+      <td id="T_c8fbc_row12_col2" class="data row12 col2" >14</td>
+      <td id="T_c8fbc_row12_col3" class="data row12 col3" >Mr. Henry</td>
+      <td id="T_c8fbc_row12_col4" class="data row12 col4" >n/a</td>
+      <td id="T_c8fbc_row12_col5" class="data row12 col5" >17.872064</td>
+      <td id="T_c8fbc_row12_col6" class="data row12 col6" >93.465493</td>
+      <td id="T_c8fbc_row12_col7" class="data row12 col7" >0.000000</td>
+      <td id="T_c8fbc_row12_col8" class="data row12 col8" >0.000000</td>
+      <td id="T_c8fbc_row12_col9" class="data row12 col9" >0.000000</td>
+      <td id="T_c8fbc_row12_col10" class="data row12 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row13" class="row_heading level0 row13" >14</th>
+      <td id="T_c8fbc_row13_col0" class="data row13 col0" >15</td>
+      <td id="T_c8fbc_row13_col1" class="data row13 col1" >M</td>
+      <td id="T_c8fbc_row13_col2" class="data row13 col2" >13</td>
+      <td id="T_c8fbc_row13_col3" class="data row13 col3" >Mr. Jeffrey</td>
+      <td id="T_c8fbc_row13_col4" class="data row13 col4" >n/a</td>
+      <td id="T_c8fbc_row13_col5" class="data row13 col5" >15.118808</td>
+      <td id="T_c8fbc_row13_col6" class="data row13 col6" >108.584301</td>
+      <td id="T_c8fbc_row13_col7" class="data row13 col7" >0.000000</td>
+      <td id="T_c8fbc_row13_col8" class="data row13 col8" >1.000000</td>
+      <td id="T_c8fbc_row13_col9" class="data row13 col9" >0.000000</td>
+      <td id="T_c8fbc_row13_col10" class="data row13 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row14" class="row_heading level0 row14" >15</th>
+      <td id="T_c8fbc_row14_col0" class="data row14 col0" >16</td>
+      <td id="T_c8fbc_row14_col1" class="data row14 col1" >M</td>
+      <td id="T_c8fbc_row14_col2" class="data row14 col2" >12</td>
+      <td id="T_c8fbc_row14_col3" class="data row14 col3" >Mr. James</td>
+      <td id="T_c8fbc_row14_col4" class="data row14 col4" >Joyce</td>
+      <td id="T_c8fbc_row14_col5" class="data row14 col5" >17.773263</td>
+      <td id="T_c8fbc_row14_col6" class="data row14 col6" >126.357564</td>
+      <td id="T_c8fbc_row14_col7" class="data row14 col7" >0.000000</td>
+      <td id="T_c8fbc_row14_col8" class="data row14 col8" >1.000000</td>
+      <td id="T_c8fbc_row14_col9" class="data row14 col9" >0.000000</td>
+      <td id="T_c8fbc_row14_col10" class="data row14 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row15" class="row_heading level0 row15" >16</th>
+      <td id="T_c8fbc_row15_col0" class="data row15 col0" >17</td>
+      <td id="T_c8fbc_row15_col1" class="data row15 col1" >M</td>
+      <td id="T_c8fbc_row15_col2" class="data row15 col2" >12</td>
+      <td id="T_c8fbc_row15_col3" class="data row15 col3" >Mr. John</td>
+      <td id="T_c8fbc_row15_col4" class="data row15 col4" >n/a</td>
+      <td id="T_c8fbc_row15_col5" class="data row15 col5" >20.096358</td>
+      <td id="T_c8fbc_row15_col6" class="data row15 col6" >146.453922</td>
+      <td id="T_c8fbc_row15_col7" class="data row15 col7" >0.000000</td>
+      <td id="T_c8fbc_row15_col8" class="data row15 col8" >0.000000</td>
+      <td id="T_c8fbc_row15_col9" class="data row15 col9" >0.000000</td>
+      <td id="T_c8fbc_row15_col10" class="data row15 col10" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row16" class="row_heading level0 row16" >17</th>
+      <td id="T_c8fbc_row16_col0" class="data row16 col0" >18</td>
+      <td id="T_c8fbc_row16_col1" class="data row16 col1" >M</td>
+      <td id="T_c8fbc_row16_col2" class="data row16 col2" >12</td>
+      <td id="T_c8fbc_row16_col3" class="data row16 col3" >Mr. Robert</td>
+      <td id="T_c8fbc_row16_col4" class="data row16 col4" >n/a</td>
+      <td id="T_c8fbc_row16_col5" class="data row16 col5" >21.431781</td>
+      <td id="T_c8fbc_row16_col6" class="data row16 col6" >167.885703</td>
+      <td id="T_c8fbc_row16_col7" class="data row16 col7" >0.000000</td>
+      <td id="T_c8fbc_row16_col8" class="data row16 col8" >0.000000</td>
+      <td id="T_c8fbc_row16_col9" class="data row16 col9" >0.000000</td>
+      <td id="T_c8fbc_row16_col10" class="data row16 col10" >1.000000</td>
+    </tr>
+    <tr>
+      <th id="T_c8fbc_level0_row17" class="row_heading level0 row17" >18</th>
+      <td id="T_c8fbc_row17_col0" class="data row17 col0" >19</td>
+      <td id="T_c8fbc_row17_col1" class="data row17 col1" >M</td>
+      <td id="T_c8fbc_row17_col2" class="data row17 col2" >11</td>
+      <td id="T_c8fbc_row17_col3" class="data row17 col3" >Mr. Thomas</td>
+      <td id="T_c8fbc_row17_col4" class="data row17 col4" >n/a</td>
+      <td id="T_c8fbc_row17_col5" class="data row17 col5" >18.075135</td>
+      <td id="T_c8fbc_row17_col6" class="data row17 col6" >185.960838</td>
+      <td id="T_c8fbc_row17_col7" class="data row17 col7" >0.000000</td>
+      <td id="T_c8fbc_row17_col8" class="data row17 col8" >1.000000</td>
+      <td id="T_c8fbc_row17_col9" class="data row17 col9" >1.000000</td>
+      <td id="T_c8fbc_row17_col10" class="data row17 col10" >1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</html>
+
+\normalsize
+<!-- \elandscape -->
+
+Data step also generated dictionary of updated surnames:
+
+```python
+dfout2 = pd.DataFrame(
+    data=[tuple(surname_dict), surname_dict.values()]
+).transpose().set_axis(['Name', 'Surname'], axis=1)
+display(dfout2)
+```
+
+which after running datastep and above snipet will returns:
+
+<html>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Name</th>
+      <th>Surname</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Alice</td>
+      <td>Caroll</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>James</td>
+      <td>Joyce</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Janet</td>
+      <td>Unknown aged:15</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Carol</td>
+      <td>Unknown aged:14</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Judy</td>
+      <td>Unknown aged:14</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Barbara</td>
+      <td>Unknown aged:13</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Jane</td>
+      <td>Unknown aged:12</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Louise</td>
+      <td>Unknown aged:12</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Joyce</td>
+      <td>Unknown aged:11</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Philip</td>
+      <td>Unknown aged:16</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Ronald</td>
+      <td>Unknown aged:15</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>William</td>
+      <td>Unknown aged:15</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Alfred</td>
+      <td>Unknown aged:14</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Henry</td>
+      <td>Unknown aged:14</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Jeffrey</td>
+      <td>Unknown aged:13</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>John</td>
+      <td>Unknown aged:12</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Robert</td>
+      <td>Unknown aged:12</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Thomas</td>
+      <td>Unknown aged:11</td>
+    </tr>
+  </tbody>
+</table>
+</html>
+
+### SAS code for data step example
+
+Above pyLikeSAS data step example could be written in SAS as follows:
+
+```c 
+/* SAS code for BMI */
+
+proc format;
+      value bmi_label
+      /*    # Function to categorize weight :*/
+      low - 18.5 = "Underweight"
+      18.5 < - 25.0 = "Normal"
+      25.0 < - 40 = "Overweight"
+      other = "Obese"
+;
+run;
+
+
+proc sort data = sashelp.class out = class;
+      by sex descending age;
+run;
+
+data dfout;
+      length name $50;
+      retain BMI 0 sumBMI 0 nOBS;
+
+      set class (obs=19 rename=(name=name_ori));
+      by sex descending age;
+
+      drop name_ori;
+
+      nOBS = _n_;
+      Height = Height*2.54/100;
+      Weight = Weight*0.45359237;
+      BMI = Weight/(Height)**2;
+
+      msg = put(BMI,bmi_label.);
+
+      /*     skip row with Mary*/
+      if name_ori='Mary' then do;
+            return;
+      end;
+
+      /*    surname dictionary could be implemented using hash...*/
+      /*    Surname = surname_dict.get(Name, 'n/a')*/
+      /*    if Surname == 'n/a':*/
+      /*        surname_dict[Name] = 'Unknown aged:'+str(Age)*/
+      if Sex = 'M' then
+          Name = 'Mr. ' || name_ori;
+      else
+          Name = 'Miss ' || name_ori;
+
+      if first.Sex then do;
+          sumBMI = 0.;
+      end;
+      sumBMI = sumBMI+BMI;
+      first_Sex = first.Sex;
+      first_Age = first.Age;
+      last_Sex = last.Sex;
+      last_Age = last.Age;
+      output;
+run;
+proc print;run;
+```
+
+SAS code is remarkably similar - just update of surname dictionary was not implemented (could be done using SAS hash object).

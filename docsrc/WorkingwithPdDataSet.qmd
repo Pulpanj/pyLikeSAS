@@ -1,0 +1,531 @@
+## Working with PdDataSet
+
+PdDataSet (pandas dataset) object is small extension of pandas DataFrame, it appends following attributes to columns (variables):
+
+- **label** - descriptive label of the column to be used when PdDataSet is presented (printed)
+- **format** - descriptor that defines how the value in column will be presented (when printed)
+- PdDataSet also support **desc** attribute which represents description of dataset (could be set e.g as title when printed).
+
+As child object of pandas DataFrame PdDataSet support all methods  known to pandas DataFrame.
+Above attributes of PdDataSet are kept inside object, they are surfaced only when PdDataSet is printed (or used in the graph). When processing PdDataSet (by SQL or data step or using data set options) its attributes are inherited by the output PdDataSet.
+
+### How to initialize PdDataSet
+
+- Simplest variant - just pass pandas DataFrame
+  
+```python
+# initialize PdDataSet by passing pd.DataFrame
+ds = PdDataSet(df)
+```
+
+- Using pandas DataFrame constructor
+
+```python
+# initialize PdDataSet using pd.DataFrame constructor options
+newcomers_tuples = [
+    ('Ferda', 'M', 14, 100.0, 45.00),
+    ('Manicka', 'F', 13, 91.0, 40.00)
+]
+newcomers_ds = PdDataSet(
+    newcomers_tuples,
+    columns=[
+        'Name', 'Sex', 'Age', 'Weight', 'Height'
+    ],
+)
+```
+
+Both above examples had instantiated PdDataSet object but did not set any
+additional attributes available to PdDataSet (so these are basically plain
+pandas DataFrame). Additional PdDataSet attributes are covered in following
+sections.
+
+### Setting labels of PdDataset columns
+
+Label parameter allows to define descriptive labels of PdDataSet columns. It is
+just stored as PdDataSet attribute, i.e. original short column names are
+preserved, column labels are used only when PdDataSet is presented (e.g. by
+using proc_print).
+
+```python
+df1 = PdDataSet(
+    df.head(3),
+    label={'Name': "Student's First Name", 'Sex': "Student Gender"}
+)
+proc_print(df1) 
+```
+
+- PdDataSet rendered by proc_print in Jupyter notebook show columns with labels:
+
+| obs  | Student's First Name | Student Gender |  Age | Height | Weight |
+| :--- | :------------------- | :------------- | ---: | -----: | -----: |
+| 0    | Alfred               | M              |   14 |     69 |  112.5 |
+| 1    | Alice                | F              |   13 |   56.5 |     84 |
+| 2    | Barbara              | F              |   13 |   65.3 |     98 |
+
+### Setting formats of PdDataset columns
+
+Format of variable, as it is known in SAS, is actually mapping of column's values
+to the set of descriptive labels. Formats are applied when only data set is presented
+(e.g. printed by **proc_print**). Formats are persistent attributes of PdDataSet,
+i.e. these are preserved when PdDataSet is processed by **SQL** (used in the ds_options) or  **data_step** function.
+
+Definition of mapping function in python is straightforward,
+also direct usage of python formatting (like ``'{:,.1f}'``) is supported by
+inheriting it from pandas.
+
+- Example of setting PdDataSet with formats
+  
+```python
+# read input df
+df = pd.read_csv("./data/class.csv").head(3)
+
+# provide labels for values in the column Sex
+gender_labels = {
+    'M': 'Male',
+    'F': 'Female',
+}
+
+# define data set
+ds = PdDataSet(
+    df,
+    label={
+        'Name': "Name in upper case",
+        'Age': "Age as binary",
+        'Sex': "Gender as label",
+    },
+    format={
+        'Name': lambda s: s.upper(),
+        'Sex': lambda s: gender_labels.get(s),
+        'Age':"{0:b}",
+        'Height': '{:12.3f}',
+        'Weight': '{:12.0f}',
+    },
+)
+proc_print(ds, template='seaside')
+
+```
+
+- The resulting output rendered the data set as:
+
+<html>
+<style type="text/css">
+#T_a8152   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  text-align: left;
+  vertical-align: middle;
+  color: black;
+  font-family: Arial, 'Albany AMT', Helvetica, sans-serif;
+  font-size: 10pt;
+  font-style: normal;
+  font-weight: normal;
+  margin: 0;
+  padding: 5px;
+}
+#T_a8152 thead {
+  background-color: cornsilk;
+  color: black;
+}
+#T_a8152 th {
+  font-size: 120%;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  border: 1px solid black;
+}
+#T_a8152 td {
+  border: 1px solid black;
+  padding: 5px;
+}
+</style>
+<table id="T_a8152">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_a8152_level0_col0" class="col_heading level0 col0" >Name in upper case</th>
+      <th id="T_a8152_level0_col1" class="col_heading level0 col1" >Gender as label</th>
+      <th id="T_a8152_level0_col2" class="col_heading level0 col2" >Age as binary</th>
+      <th id="T_a8152_level0_col3" class="col_heading level0 col3" >Height</th>
+      <th id="T_a8152_level0_col4" class="col_heading level0 col4" >Weight</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >obs</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_a8152_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_a8152_row0_col0" class="data row0 col0" >ALFRED</td>
+      <td id="T_a8152_row0_col1" class="data row0 col1" >Male</td>
+      <td id="T_a8152_row0_col2" class="data row0 col2" >1110</td>
+      <td id="T_a8152_row0_col3" class="data row0 col3" >      69.000</td>
+      <td id="T_a8152_row0_col4" class="data row0 col4" >         112</td>
+    </tr>
+    <tr>
+      <th id="T_a8152_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_a8152_row1_col0" class="data row1 col0" >ALICE</td>
+      <td id="T_a8152_row1_col1" class="data row1 col1" >Female</td>
+      <td id="T_a8152_row1_col2" class="data row1 col2" >1101</td>
+      <td id="T_a8152_row1_col3" class="data row1 col3" >      56.500</td>
+      <td id="T_a8152_row1_col4" class="data row1 col4" >          84</td>
+    </tr>
+    <tr>
+      <th id="T_a8152_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_a8152_row2_col0" class="data row2 col0" >BARBARA</td>
+      <td id="T_a8152_row2_col1" class="data row2 col1" >Female</td>
+      <td id="T_a8152_row2_col2" class="data row2 col2" >1101</td>
+      <td id="T_a8152_row2_col3" class="data row2 col3" >      65.300</td>
+      <td id="T_a8152_row2_col4" class="data row2 col4" >          98</td>
+    </tr>
+  </tbody>
+</table>
+</html>
+
+### Using lookup_format for definition of format functions
+
+The beauty of SAS format is capability to handle unknown and missing values (by
+presenting them by predefined string values) or map ranges of values to labels
+for such bands.
+
+For that reason, pyLikeSAS provides **lookup_format** function capable to
+define custom formatting functions that cover handling of data ranges,
+the special label for missing value along with the label for unknown values
+(i.e. values not specifies in the format definition).
+
+SAS gurus are capable to define SAS format that use function
+output as value label. The same functionality is easy in python - it allows
+to define mapping functions for values, data ranges (including low label), and of
+course for missing and unknown values.
+
+Little bit elaborate example of these capabilities follows. Let start by
+appending some missing and unknown data to out sample dataframe:
+
+```python
+# read data to dataframe
+df0 = pd.read_csv("./data/class.csv").head(3)
+
+# add various missing/unknown values
+new_row1 = ['Old one', "", 99, np.nan, 12345.75]
+dfm1 = pd.DataFrame(new_row1).T
+dfm1.columns = df0.columns
+new_row2 = [None, '', 14.5, np.nan, np.nan]
+dfm2 = pd.DataFrame(new_row2).T
+dfm2.columns = df0.columns
+new_row3 = ["", 'X', np.nan, np.nan, np.nan]
+dfm3 = pd.DataFrame(new_row3).T
+dfm3.columns = df0.columns
+df = pd.concat([dfm1, df0, dfm2, dfm3], ignore_index=True)
+df['ori_sex'] = df['Sex']
+df['ori_age'] = df['Age']
+print(df)
+
+```
+
+which generates following dataframe:
+
+```text
+      Name  Sex   Age Height    Weight ori_sex ori_age
+0  Old one        99    NaN  12345.75              99
+1   Alfred   M    14   69.0     112.5       M      14
+2    Alice   F    13   56.5      84.0       F      13
+3  Barbara   F    13   65.3      98.0       F      13
+4     None      14.5    NaN       NaN            14.5
+5            X   NaN    NaN       NaN       X     NaN
+```
+
+With missing and empty values in some columns user defined formatting functions
+should handle missing (None) values and cover all possible inputs.
+
+Following is the example of the (rather weird) custom formatting
+function to be used for Name column (that handle a short name and None value).
+
+```python
+# define function to be used for formatting Name column
+def my_last_upper(s): 
+    if s is None: 
+        return 'Missing name'
+    if len(s)<2 :
+        return 'Short name repr(name):'+repr(s)
+    else:
+        return s[0:-1]+s[-1:].upper()
+
+my_last_upper(None)     #-> 'Missing name'
+my_last_upper('')       #-> "Short name repr(name):''"
+my_last_upper('john')  #-> 'johN'
+
+```
+
+By using **lookup_format** we can easily extend lamba function, that was used for
+formatting column Sex in the first example of formats, by the following definition
+of formatting function:
+
+```python
+# provide labels for values in the column Sex
+gender_labels = {
+    'M': 'Male',
+    'F': 'Female',
+}
+#extend lookup_format to handle missing/unknown values 
+# define function to be used for formatting
+sex_labels = lookup_format(
+    lookup=gender_labels,
+    missing=lambda s: 'repr(sex) is:'+repr(s),
+    unknown=lambda s: 'unknown value:'+str(s)
+)
+sex_labels('F')     # -> Female
+sex_labels('M')     # -> Male
+sex_labels('X')     # -> unknown value:X
+sex_labels('')      # -> "repr(sex) is:''"
+sex_labels(None)    # 'repr(sex) is:None'
+
+```
+
+If we want to format column Age by labels representing ranges of values,
+we can easily use **lookup_format** with lookup dictionary, that defines boundaries of
+required ranges, the **low** parameter that is used for values bellow the first range boundary
+(and also defines label for missing value).
+
+```python
+# define function to be used for formatting Age column into bands
+age_bands = lookup_format(
+    lookup={
+        13: 'Junior:13->15',
+        15: 'Cadet: 15->20',
+        20: 'Adult: 20->25',
+        25: lambda s: 'Adult 25+:'+str(s),
+    },
+    low='under 14',
+    missing='Age is missing',
+)
+age_bands(9)        # -> under 14
+age_bands(14)       # -> 'Junior:13->15'
+age_bands(14.5)     # -> 'Junior:13->15'
+age_bands(15)       # -> 'Cadet: 15->20'
+age_bands(19)       # ->'Cadet: 15->20'
+age_bands(20)       # -> 'Cadet: 15->20'
+age_bands(26)       # -> 'Adult 25+:26'
+age_bands(None)     #-> Age is missing
+
+```
+
+All these custom formatting functions could be used in format definition of
+PdDataset object.
+
+```python
+pds = PdDataSet(
+    df,
+    format={
+        "Name": my_last_upper,
+        "Sex": sex_labels,
+        "Age": age_bands,
+    },
+    label={'Name': "Student's First Name", 'Sex': "Student Gender"},
+)
+```
+
+PdDataset object with formats could be rendered by **proc_print**
+(the proc_print's parameter *missing*  defines representation of
+missing values that are not handled by the custom formatting functions):
+
+```python
+
+proc_print(pds, keep='name sex age ori_sex ori_age Height', template='html',
+           missing=('proc_print:numerical_none', 'proc_print:string_none'))
+
+```
+
+The following output is obtained when rendering such PdDataset object using
+above **proc_print** call:
+
+\tiny
+
+<html>
+<style type="text/css">
+#T_11a60   {
+  background-color: white;
+  border-collapse: collapse;
+  border-color: black;
+  border-style:  solid;
+  border-spacing: 0;
+  padding: 2px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 10pt;
+  font-family: Helvetica;
+  border-collapse: collapse;
+  border: none;
+}
+#T_11a60 thead {
+  background-color: royalblue;
+  color: white;
+}
+#T_11a60 tbody tr:nth-child(even) {
+  background-color: white;
+}
+#T_11a60 tbody tr:nth-child(odd) {
+  background-color: whitesmoke;
+}
+#T_11a60 td {
+  border: 1px solid black;
+  padding: 2px;
+  text-align: left;
+}
+#T_11a60 th {
+  font-size: 100%;
+  text-align: center;
+  padding: 0.5em;
+  border: 1px solid black;
+}
+#T_11a60 tr:hover {
+  background-color: midnightblue;
+  color: yellow;
+}
+#T_11a60 tbody tr:hover {
+  background-color: lavender;
+  color: black;
+  mix-blend-mode: difference;
+}
+#T_11a60 td:hover {
+  border-style:  outset;
+  background-color: lightgoldenrodyellow;
+  mix-blend-mode: exclusion;
+  border: 1px solid red;
+}
+#T_11a60 .index {
+  font-style: italic;
+  color: gold;
+  font-weight: normal;
+}
+#T_11a60 .index_name {
+  color: yellow;
+  font-style: italic;
+}
+#T_11a60 caption {
+  font-size: 120%;
+  font-style: bold;
+  caption-side: top;
+  text-align: left;
+  margin: 10;
+}
+</style>
+<table id="T_11a60">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_11a60_level0_col0" class="col_heading level0 col0" >Student's First Name</th>
+      <th id="T_11a60_level0_col1" class="col_heading level0 col1" >Student Gender</th>
+      <th id="T_11a60_level0_col2" class="col_heading level0 col2" >Age</th>
+      <th id="T_11a60_level0_col3" class="col_heading level0 col3" >ori_sex</th>
+      <th id="T_11a60_level0_col4" class="col_heading level0 col4" >ori_age</th>
+      <th id="T_11a60_level0_col5" class="col_heading level0 col5" >Height</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >obs</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+      <th class="blank col4" >&nbsp;</th>
+      <th class="blank col5" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_11a60_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_11a60_row0_col0" class="data row0 col0" >Old onE</td>
+      <td id="T_11a60_row0_col1" class="data row0 col1" >repr(sex) is:''</td>
+      <td id="T_11a60_row0_col2" class="data row0 col2" >Adult 25+:99</td>
+      <td id="T_11a60_row0_col3" class="data row0 col3" ></td>
+      <td id="T_11a60_row0_col4" class="data row0 col4" >99</td>
+      <td id="T_11a60_row0_col5" class="data row0 col5" >proc_print:numerical_none</td>
+    </tr>
+    <tr>
+      <th id="T_11a60_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_11a60_row1_col0" class="data row1 col0" >AlfreD</td>
+      <td id="T_11a60_row1_col1" class="data row1 col1" >Male</td>
+      <td id="T_11a60_row1_col2" class="data row1 col2" >Junior:13->15</td>
+      <td id="T_11a60_row1_col3" class="data row1 col3" >M</td>
+      <td id="T_11a60_row1_col4" class="data row1 col4" >14</td>
+      <td id="T_11a60_row1_col5" class="data row1 col5" >69.000000</td>
+    </tr>
+    <tr>
+      <th id="T_11a60_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_11a60_row2_col0" class="data row2 col0" >AlicE</td>
+      <td id="T_11a60_row2_col1" class="data row2 col1" >Female</td>
+      <td id="T_11a60_row2_col2" class="data row2 col2" >Junior:13->15</td>
+      <td id="T_11a60_row2_col3" class="data row2 col3" >F</td>
+      <td id="T_11a60_row2_col4" class="data row2 col4" >13</td>
+      <td id="T_11a60_row2_col5" class="data row2 col5" >56.500000</td>
+    </tr>
+    <tr>
+      <th id="T_11a60_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_11a60_row3_col0" class="data row3 col0" >BarbarA</td>
+      <td id="T_11a60_row3_col1" class="data row3 col1" >Female</td>
+      <td id="T_11a60_row3_col2" class="data row3 col2" >Junior:13->15</td>
+      <td id="T_11a60_row3_col3" class="data row3 col3" >F</td>
+      <td id="T_11a60_row3_col4" class="data row3 col4" >13</td>
+      <td id="T_11a60_row3_col5" class="data row3 col5" >65.300000</td>
+    </tr>
+    <tr>
+      <th id="T_11a60_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_11a60_row4_col0" class="data row4 col0" >Missing name</td>
+      <td id="T_11a60_row4_col1" class="data row4 col1" >repr(sex) is:''</td>
+      <td id="T_11a60_row4_col2" class="data row4 col2" >Junior:13->15</td>
+      <td id="T_11a60_row4_col3" class="data row4 col3" ></td>
+      <td id="T_11a60_row4_col4" class="data row4 col4" >14.500000</td>
+      <td id="T_11a60_row4_col5" class="data row4 col5" >proc_print:numerical_none</td>
+    </tr>
+    <tr>
+      <th id="T_11a60_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_11a60_row5_col0" class="data row5 col0" >Short name repr(name):''</td>
+      <td id="T_11a60_row5_col1" class="data row5 col1" >unknown value:X</td>
+      <td id="T_11a60_row5_col2" class="data row5 col2" >Age is missing</td>
+      <td id="T_11a60_row5_col3" class="data row5 col3" >X</td>
+      <td id="T_11a60_row5_col4" class="data row5 col4" >proc_print:string_none</td>
+      <td id="T_11a60_row5_col5" class="data row5 col5" >proc_print:numerical_none</td>
+    </tr>
+  </tbody>
+</table>
+</html>
+
+\normalsize
+
+### How to check persistency of PdDataSet attributes
+
+All PdDataSet constructor parameters are kept in **\_attrs** attribute of
+pd.DataFrame and so these could be checked by the **vars()** function:
+
+```python
+df1 = PdDataSet(
+    df.head(3),
+    desc='this is dataset description',
+    format={
+        "Name": my_upper
+    },
+    label={'Name': "Student's First Name", 'Sex': "Student Gender"}
+)
+vars(df1)
+```
+
+- Partial output of vars statement:
+
+```python
+{
+  #...(more items)
+  Items: Index(['Name', 'Sex', 'Age', 'Height', 'Weight'], dtype='object')
+  #...(more items)
+  '_attrs': {'desc': "this is dataset description",
+  'label': {'Name': "Student's First Name", 'Sex': "Student Gender"},
+  'format': {'Name': <function __main__.my_upper(s)>}},
+  #...(more items)
+}
+```

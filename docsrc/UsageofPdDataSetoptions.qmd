@@ -1,0 +1,315 @@
+## Usage of PdDataSet options
+
+Data set options in SAS is great facility that is capable to reduce row/columns
+of dataset on the fly when it is used as input for processing (or at the end of
+processing for output dataset).
+
+PdDataSet method **ds_options** supports similar functionality - it returns
+PdDataSet object that is  modified by specified dataset options.
+
+In addition to traditional SAS dataset options it is possible to work directly
+with the results of  SQL select statement that is processes on parent PdDataSet
+object (or even use more  PdDataSet objects). It resembles inline SQL input
+available in SAS DS2 procedure.
+
+### Selecting columns
+
+- SAS style of keeping columns of PdDataSet will return just columns selected
+    specified on keep list
+
+```python
+df = pd.read_csv(
+    "./data/class.csv",
+    dtype={'Weight':  float, 'Height':  float, }
+)
+PdDataSet(df.head(3)).ds_options(keep=['Name', 'Sex', 'Age'])
+```
+
+- returned PdDataSet with keep dataset option:
+
+| obs  | Name    | Sex  |  Age |
+| :--- | :------ | :--- | ---: |
+| 0    | Alfred  | M    |   14 |
+| 1    | Alice   | F    |   13 |
+| 2    | Barbara | F    |   13 |
+
+- **drop** parameter is inverse of keep - listed columns on  are removed from
+   the parent PdDataset. Of course keep and drop cannot be used simultaneously.
+  
+```python
+PdDataSet(df.head(3)).ds_options(drop=['Sex', 'Age'])
+```
+
+- returned PdDataSet with drop dataset option:
+
+| obs  | Name    | Height | Weight |
+| :--- | :------ | -----: | -----: |
+| 0    | Alfred  |     69 |  112.5 |
+| 1    | Alice   |   56.5 |     84 |
+| 2    | Barbara |   65.3 |     98 |
+
+- **keep/drop** parameters could also list column names as one string column
+   names separated by space(s). Column names are case insensitive in this case.
+
+```python
+PdDataSet(df.head(3)).ds_options(keep='name Sex age')
+```
+
+- returned PdDataSet that use list of variables in the string
+
+| obs  | Name    | Sex  |  Age |
+| :--- | :------ | :--- | ---: |
+| 0    | Alfred  | M    |   14 |
+| 1    | Alice   | F    |   13 |
+| 2    | Barbara | F    |   13 |
+
+### Selecting rows
+
+#### Selecting range of observations
+
+- **obs** option selects the first ``obs`` observations
+from the parent PdDataSet, for example:
+
+```python
+PdDataSet(df).ds_options(obs=4)
+```
+
+- returns the first 4 observations from the parent PdDataSet
+  
+| obs  | Name    | Sex  |  Age | Height | Weight |
+| :--- | :------ | :--- | ---: | -----: | -----: |
+| 0    | Alfred  | M    |   14 |     69 |  112.5 |
+| 1    | Alice   | F    |   13 |   56.5 |     84 |
+| 2    | Barbara | F    |   13 |   65.3 |     98 |
+| 3    | Carol   | F    |   14 |   62.8 |  102.5 |
+
+- **firstobs** option starts selection from the ``firstobs`` observation
+, for example:
+
+```python
+PdDataSet(df).ds_options(
+    firstobs=5,
+    obs=8
+)
+```
+
+- returns observations 5-7 from the parent PdDataSet
+
+| obs  | Name  | Sex  |  Age | Height | Weight |
+| :--- | :---- | :--- | ---: | -----: | -----: |
+| 5    | James | M    |   12 |   57.3 |     83 |
+| 6    | Jane  | F    |   12 |   59.8 |   84.5 |
+| 7    | Janet | F    |   15 |   62.5 |  112.5 |
+
+- **obs** option could be also specified as tuple that defined the
+first and the last observation to be read (negative indexing follows python indexing rules),
+so following tuple:
+
+```python
+PdDataSet(df).ds_options(
+    obs=(14,-2)
+)
+```
+
+- selects rows from 14 to 16 (as sample dataset has 18 rows):
+
+| obs  | Name   | Sex  |  Age | Height | Weight |
+| :--- | :----- | :--- | ---: | -----: | -----: |
+| 14   | Philip | M    |   16 |     72 |    150 |
+| 15   | Robert | M    |   12 |   64.8 |    128 |
+| 16   | Ronald | M    |   15 |     67 |    133 |
+
+- Use (n,None) for reading all rows starting from n-th row, so following code:
+
+```python
+PdDataSet(df).ds_options(
+    obs=(15, None)
+)
+```
+
+- returns all rows above row 15:
+  
+| obs  | Name    | Sex  |  Age | Height | Weight |
+| :--- | :------ | :--- | ---: | -----: | -----: |
+| 15   | Robert  | M    |   12 |   64.8 |    128 |
+| 16   | Ronald  | M    |   15 |     67 |    133 |
+| 17   | Thomas  | M    |   11 |   57.5 |     85 |
+| 18   | William | M    |   15 |   66.5 |    112 |
+
+- **obs** copuld be also list of from-to tuples, for example:
+
+```python
+PdDataSet(df).ds_options(
+    obs=[(4, 6), (16, -1), (10,12)]
+)
+```
+
+- returns ranges of observations defined by list of tuples:
+
+| obs  | Name   | Sex  |  Age | Height | Weight |
+| :--- | :----- | :--- | ---: | -----: | -----: |
+| 4    | Henry  | M    |   14 |   63.5 |  102.5 |
+| 5    | James  | M    |   12 |   57.3 |     83 |
+| 16   | Ronald | M    |   15 |     67 |    133 |
+| 17   | Thomas | M    |   11 |   57.5 |     85 |
+| 10   | Joyce  | F    |   11 |   51.3 |   50.5 |
+| 11   | Judy   | F    |   14 |   64.3 |     90 |
+
+### Renaming columns
+
+Renaming variables is defined by python dictionary passed as **rename**
+parameter.
+
+```python
+PdDataSet(df).ds_options(
+    drop='Sex',
+    obs=(3, 7),
+    rename={'Name': 'FirstName'}
+)
+```
+
+- returned PdDataSet with renamed Name variable:
+
+| obs  | FirstName |  Age | Height | Weight |
+| :--- | :-------- | ---: | -----: | -----: |
+| 3    | Carol     |   14 |   62.8 |  102.5 |
+| 4    | Henry     |   14 |   63.5 |  102.5 |
+| 5    | James     |   12 |   57.3 |     83 |
+| 6    | Jane      |   12 |   59.8 |   84.5 |
+
+### Setting formats and labels of columns
+
+Unsurprisingly formats and labels for ds_options() are set in the same way as when PdDataset is initiated.  
+
+```python
+pds = PdDataSet(df)
+proc_print(
+    pds.ds_options(
+        format={
+            "Name": my_upper,
+            "Sex": lookup_format(lookup=gender_labels, missing='N/A'),
+            "Age": age_bands,
+            "Weight": "{:.2f}",
+            "Height": "{:.3f}"
+        },
+        label={'Name': "Student's First Name", 'Sex': "Student Gender"},
+        obs=3
+    ),
+    template='markdown'
+)
+```
+
+which returns following markdown representing how data set optins were set for printing. Original PdDataSet object **pds** (which do not have any additional attributes) remains unchanged.
+
+| obs  | Student's First Name | Student Gender | Age    | Height | Weight |
+| :--- | :------------------- | :------------- | :----- | -----: | -----: |
+| 0    | ALFRED               | Male           | Cadet  |     69 |  112.5 |
+| 1    | ALICE                | Female         | Junior |   56.5 |     84 |
+| 2    | BARBARA              | Female         | Junior |   65.3 |     98 |
+
+### Using SQL select based on the dataset
+
+Dataset option **sql** allows to manipulate PdDataSet data using SQL on the fly
+
+- without modification of the original PdDataSet object - that is identified by table name **self** in the SQL statement.
+
+  - Following example demonstrates sql parameter on SQL select that adds one
+(on the fly) calculated column:
+
+```python
+sql = """
+    SELECT
+        a.Name,
+        a.sex,
+        a.age,
+        a.weight*0.45359237/(a.height*2.54/100)**2 as BMI
+    FROM
+        self as a
+    WHERE
+        a.age > 14
+    """
+PdDataSet(df).ds_options(sql=sql).ds_options(format={'BMI': '{:.0f}'})
+```
+
+- Returned PdDataSet object contains calculated column BMI:
+
+| obs  | Name    | Sex  |  Age |  BMI |
+| :--- | :------ | :--- | ---: | ---: |
+| 0    | Janet   | F    |   15 |   20 |
+| 1    | Mary    | F    |   15 |   18 |
+| 2    | Philip  | M    |   16 |   20 |
+| 3    | Ronald  | M    |   15 |   21 |
+| 4    | William | M    |   15 |   18 |
+
+Dataset option **sql** could be combined with the other parameters of
+ds_options()   method. In that case **sql** is processed first and other
+parameters are applied to the resulting PdDataSet object.
+
+- Following snippet  demonstrates that on the example that select 3 observations
+having highest and lowest weight:
+
+```python
+    PdDataSet(df).ds_options(
+        obs=[(None,3), (-3,None)],
+        sql='select * from self order by weight'
+    )
+```
+
+- Returned PdDataSet contains just 6 observation:
+
+| obs  | Name   | Sex  |  Age | Height | Weight |
+| :--- | :----- | :--- | ---: | -----: | -----: |
+| 0    | Joyce  | F    |   11 |   51.3 |   50.5 |
+| 1    | Louise | F    |   12 |   56.3 |     77 |
+| 2    | James  | M    |   12 |   57.3 |     83 |
+| 16   | Robert | M    |   12 |   64.8 |    128 |
+| 17   | Ronald | M    |   15 |     67 |    133 |
+| 18   | Philip | M    |   16 |     72 |    150 |
+
+#### Using SQL select based on the several datasets
+
+Dataset option **sql**  is not limited to parent table **self**. It is possible
+to add several more "tables" into SQL statement using **ducktbls** list (of
+PdDataSet/Pd.DataFrame objects) which are identifies by their aliases defined by
+**ducktbls_aliases** list (of strings).
+
+Following elaborate example links 3 tables (additional tables are not necessary
+the same as self as it is in this demonstration case):
+
+```python
+# using sql with more tables
+dfdset=PdDataSet(df)
+df1 = dfdset
+df2 = dfdset
+dfdset.ds_options(
+  sql="""
+        SELECT
+          a.*,df1.*,xdf2.*
+        FROM
+          self AS a,
+          df1,
+          xdf2
+        WHERE
+            a.name <> df1.name
+            AND a.name <> xdf2.name
+          AND a.age < df1.age
+          AND df1.age < xdf2.age
+          AND a.height < df1.height
+          AND df1.height < xdf2.height
+          AND a.weight > df1.weight
+          AND df1.weight > xdf2.weight
+      """,
+  ducktbls=[df1, df2],
+  ducktbls_aliases=['df1', 'xdf2']
+)
+```
+
+- Returned PdDataSet contains just one row and several duplicated columns (with names assigned according duckdb rules):
+
+\tiny
+
+| obs  | Name   | Sex  |  Age | Height | Weight | Name_1 | Sex_1 | Age_1 | Height_1 | Weight_1 | Name_2  | Sex_2 | Age_2 | Height_2 | Weight_2 |
+| :--- | :----- | :--- | ---: | -----: | -----: | :----- | :---- | ----: | -------: | -------: | :------ | :---- | ----: | -------: | -------: |
+| 0    | Thomas | M    |   11 |   57.5 |     85 | Jane   | F     |    12 |     59.8 |     84.5 | Jeffrey | M     |    13 |     62.5 |       84 |
+
+\normalsize

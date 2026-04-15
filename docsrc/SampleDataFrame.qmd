@@ -1,0 +1,46 @@
+## Sample DataFrame
+
+The following CSV file, **class.csv**, is used to demonstrate pyLikeSAS functionality in all examples.
+
+```c
+Name,Sex,Age,Height,Weight
+Alfred,M,14,69,112.5
+Alice,F,13,56.5,84
+Barbara,F,13,65.3,98
+Carol,F,14,62.8,102.5
+Henry,M,14,63.5,102.5
+James,M,12,57.3,83
+Jane,F,12,59.8,84.5
+Janet,F,15,62.5,112.5
+Jeffrey,M,13,62.5,84
+John,M,12,59,99.5
+Joyce,F,11,51.3,50.5
+Judy,F,14,64.3,90
+Louise,F,12,56.3,77
+Mary,F,15,66.5,112
+Philip,M,16,72,150
+Robert,M,12,64.8,128
+Ronald,M,15,67,133
+Thomas,M,11,57.5,85
+William,M,15,66.5,112
+```
+
+Its content is identical to the well‑known `SASHELP.CLASS` sample table.  
+See the module `pyLikeSAS.sas_sample_datasets.py` if you need to download it.
+
+After downloading, the CSV file can be read into a `pd.DataFrame` using the following code:
+
+```python
+# import core of pyLikeSAS 
+import pandas as pd
+from pyLikeSAS.PdDataSet import PdDataSet
+from pyLikeSAS.lookup_format import lookup_format
+from pyLikeSAS.proc_print import import proc_print
+from pyLikeSAS.data_step import data_step
+
+# read class.csv into pandas DataFrame
+df = pd.read_csv(
+    "./data/class.csv",
+    dtype={'Weight':  float, 'Height':  float, }
+)
+```

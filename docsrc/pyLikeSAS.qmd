@@ -1,0 +1,84 @@
+# Current features of pyLikeSAS
+
+## PdDataSet class
+
+Basic pyLikeSAS object **PdDataSet** extends the pandas `DataFrame` class by adding the ability to set the following attributes (stored in the DataFrame’s `_attrs` attribute):
+
+- **labels** for columns (variables)  
+- **formats** for columns (variables)  
+- support for SAS‑like **dataset options**, such as:  
+  - a dataset label  
+  - **drop/keep** variables  
+  - **rename** variables  
+  - define sort **BY order**  
+  - run **SQL** SELECT on a dataset (or on multiple tables)
+
+The concept of column formats in pyLikeSAS is implemented using Python dictionaries or mapping functions.  
+See the provided **`lookup_format`** function, which also supports value ranges as well as missing and unknown values for a given variable in a `PdDataSet`.
+
+**Note:**
+
+_As the PdDataSet class simply extends the pandas DataFrame, all capabilities of the underlying DataFrame remain available._
+
+## Data step function
+
+`pyLikeSAS` also includes the **data_step** function, which mimics the behavior of the SAS data step.  
+The function is designed to work with `PdDataSet` objects and allows you to define the data‑step logic as a single Python function.  
+The return values from this logic function are then used to construct the output `PdDataSet`.
+
+The following data‑step features are supported:
+
+- define **retain** variables  
+- define **BY** groups (including **FIRST./LAST.** flag variables)  
+- define output columns and their **order** in the resulting dataset  
+- pass additional parameters to the data‑step logic function (such as dictionaries, lists, etc.)
+
+
+## PyODS class 
+
+The **PyODS** class is the pyLikeSAS version of the SAS Output Delivery System
+(ODS). Its goal is to provide simple generation of outputs in various file
+formats (destinations), with colorful styles selected or defined by the user.
+It includes:
+
+- support for titles and footnotes  
+- table output to the following formats:  
+  - plain text files  
+  - Jupyter notebooks  
+  - terminal output (formatted using the *tabulate* package)  
+  - HTML files  
+  - Markdown  
+  - LaTeX  
+- figure (graph) output to the following formats:  
+  - PNG, JPEG  
+  - SVG  
+  - PDF  
+- output of graphs either as links or inline content in the generated files  
+- definition of custom styles and templates  
+- tracing of PyODS operations  
+
+## Procedures
+
+There is no way to implement even a small fraction of all SAS procedures.  
+For now, only the basic presentation‑style functions are integrated with the `PyODS` class:
+
+- **proc_print** — print a table  
+- **proc_figure** — render a graph from a Python `matplotlib` figure  
+
+In addition, a few functions provide (very limited) functionality similar to their SAS counterparts:
+
+- **proc_freq1** — one‑dimensional frequency table(s)  
+- **proc_freq2** — two‑dimensional frequency table(s)  
+- **proc_contents** — list the contents of a table: variables and their basic statistics  
+- … more to come  
+
+## Auxiliary tools
+
+Several additional tools are included in pyLikeSAS:
+
+- **PLS_logging** — logging class for pyLikeSAS  
+- **diagnostics / helper functions**, such as:  
+  - **csv_info** — get information about a CSV file  
+  - **sas_sample_datasets** — download data from the SAS sample site  
+  - **python environment info** — report details about the current Python environment  
+- … more to come  

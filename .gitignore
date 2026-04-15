@@ -11,7 +11,8 @@ Untitled*.py
 # EXCEPTION: do NOT ignore PNGs inside /doc
 !docs/*.png
 !docs/**/*.png
-
+# EXCEPTION: do NOT ignore PNGs inside /doc
+!docsrc/images/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

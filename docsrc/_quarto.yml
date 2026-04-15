@@ -4,11 +4,12 @@ project:
   render:
       - "*.qmd"
       - "!Examples.qmd"
-      - "!UsageofPdDataSetoptions.qmd"
-      - "!WorkingwithPdDataSet.qmd"
+      # - "!UsageofPdDataSetoptions.qmd"
+      # - "!WorkingwithPdDataSet.qmd"
       - "!./docs/"
       - "!./docsrc_book/"
 
+engine: python
 
 quarto-python: "d:/ajps/pyLikeSAS/venv_python3138_pyLikeSAS/"
 
@@ -48,16 +49,16 @@ website:
           text: Purpose
         - href: pyLikeSAS.qmd
           text: Features
-      - section: "Usage Guide"
+      - section: "Usage Guides"
         contents:
         - href: SampleDataFrame.qmd 
           text: Sample DataFrame
-        - href: Implementationsofdatastep.qmd
-          text: Implementation of data step
-      #   - href: WorkingwithPdDataSet.qmd
-      #     text: Working with PdDataSet
-      #   - href: UsageofPdDataSetoptions.qmd
-      #     text: Usage of PdDataSet options
+        - href: WorkingwithPdDataSet.qmd
+          text: Working with PdDataSet
+        - href: UsageofPdDataSetoptions.qmd
+          text: Using PdDataSet Options
+        - href: ImplementationsofDataStep.qmd
+          text: Running Data Step
       #   - href: Examples.qmd
       #     text: Examples
       # - href: reference/index.qmd

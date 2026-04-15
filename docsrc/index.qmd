@@ -1,0 +1,41 @@
+---
+title: pyLikeSAS
+subtitle: "Handle data in Python the same way you used to handle it in SAS !"
+
+author: Jarda Půlpán
+email: pulpanj@volny.cz
+date: 20/04/2026
+
+---   
+
+# Documentation Summary
+
+cosi
+
+
+::: {.list-table}
+- - []{colspan=1} Section
+  - Chapter
+  - Description
+
+- - []{rowspan=2} Introduction
+  - [Purpose](Purpose.qmd)    
+  - Why pyLikeSAS was created and how it developed
+
+- - [Features](pyLikeSAS.qmd)
+  - Summary of the features
+
+- - []{rowspan=4} Usage Guides
+  - [Sample Data Set](SampleDataFrame.qmd)
+  - Description of the sample dataset used in this tutorial
+
+- - [Working with PdDataSet](WorkingwithPdDataSet.qmd)
+  - How‑To: Dataset‑like extension of the pandas DataFrame
+
+- - [Using PdDataSet Options](UsageofPdDataSetoptions.qmd)
+  - How‑To: Usage of SAS‑like DataSet options for a pandas‑based dataset
+
+- - [Running Data Step](ImplementationsofDataStep.qmd)
+  - How‑To: The data_step Function — pyLikeSAS Implementation of the SAS Data Step
+:::
+
